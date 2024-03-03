@@ -15,9 +15,7 @@ export class DatabaseService {
 
   public getBacklog(id: string) {
 
-    // return this.db.collection('backlog').doc(id).valueChanges();
-    return getDoc(doc(this.firestore, 'backlog/' + id));
     // return collectionData(collection(this.firestore, 'backlog'), { idField: 'id' })
-
+    return getDoc(doc(this.firestore, 'backlog/' + id));
   }
 }
