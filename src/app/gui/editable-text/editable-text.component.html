@@ -1,0 +1,7 @@
+<div class="relative group w-full py-0.5">
+
+    <input type="text"
+        class="hover:ring-2 w-full pl-4 py-2 cursor-pointer rounded-sm ring-1 ring-gray-300 focus:ring-2 outline-none read-only:bg-gray-200 read-only:hover:ring-1 read-only:cursor-not-allowed read-only:focus:ring-1"
+        [(ngModel)]="text" [placeholder]="placeholder" [ngClass]="custom" (keyup)="onChange($event)"
+        [readonly]="readonly" (keydown.enter)="onEnter($event)">
+</div>

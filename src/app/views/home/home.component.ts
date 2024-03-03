@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { DialogService } from '../../services/dialog.service';
+import { Router } from '@angular/router';
+import { shortid } from '../../app.component';
 import { CreateBacklogComponent } from '../../dialog/create-backlog/create-backlog.component';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-home',
@@ -11,7 +13,10 @@ import { CreateBacklogComponent } from '../../dialog/create-backlog/create-backl
 })
 export class HomeComponent {
 
-  constructor(private dialog: DialogService) { }
+  constructor(
+    private dialog: DialogService,
+    private router: Router
+  ) { }
 
   create() {
 
@@ -21,6 +26,11 @@ export class HomeComponent {
       if (!data) {
         return;
       }
+      // Create small guid
+      const id = shortid();
+      console.log("id", id);
+
+      this.router.navigate(['/backlog', id])
     })
   }
 

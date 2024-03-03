@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { DialogComponent } from '../dialog.component';
+import { EditableTextComponent } from '../../gui/editable-text/editable-text.component';
 
 @Component({
   selector: 'create-backlog',
   standalone: true,
-  imports: [],
+  imports: [EditableTextComponent],
   templateUrl: './create-backlog.component.html'
 })
 export class CreateBacklogComponent extends DialogComponent {
 
   infos = {
-    cols: []
+    title: ""
   }
 
   ngOnInit() {
