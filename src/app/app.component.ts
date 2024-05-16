@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { Firestore } from '@angular/fire/firestore';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 

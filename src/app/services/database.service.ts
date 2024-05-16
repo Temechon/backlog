@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
 
 
 @Injectable({
@@ -13,9 +13,12 @@ export class DatabaseService {
   constructor() {
   }
 
-  public getBacklog(id: string) {
+  public getCurrentMenu() {
 
-    // return collectionData(collection(this.firestore, 'backlog'), { idField: 'id' })
-    return getDoc(doc(this.firestore, 'backlog/' + id));
+    // Get one document
+    return getDoc(doc(this.firestore, 'users/julian'));
+
+    // Get collections
+    // return collectionData(collection(this.firestore, 'meals'));
   }
 }
