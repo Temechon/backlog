@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
+import { WeekMenuComponent } from '../../gui/week-menu/week-menu.component';
 
 @Component({
   selector: 'app-menu-list-component',
   standalone: true,
-  imports: [],
+  imports: [WeekMenuComponent],
   templateUrl: './menu-list-component.component.html',
   styleUrl: './menu-list-component.component.scss'
 })
