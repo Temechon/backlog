@@ -3,7 +3,7 @@ import { Ingredient } from "./ingredient.model";
 
 export class Meal {
     id: string;
-    _name: string;
+    private _name: string;
     ingredients: Ingredient[] = []; // Liste des ingrédients
 
     constructor(name?: string) {
@@ -13,10 +13,14 @@ export class Meal {
 
     get name(): string {
         if (this._name) {
-            return this.name;
+            return this._name;
         }
 
         // returns the ingredients list in order, separated by spaces
         return "liste des ingrédients";
+    }
+
+    set name(n: string) {
+        this._name = n;
     }
 }

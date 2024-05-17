@@ -1,0 +1,35 @@
+<h1 class="font-semibold text-2xl mb-12">
+    Ajouter un repas
+</h1>
+
+<div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">
+        Nom du plat
+    </label>
+    <input type="text" [(ngModel)]="meal.name"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+</div>
+
+<div class="mt-8 mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">
+        Ingrédients
+    </label>
+    <ul class="list-disc pl-5">
+        @for (ing of meal.ingredients; track $index) {
+        <li class="flex items-center justify-between mb-2 px-2 border-b py-1">
+            <span>{{ing.name}}</span>
+            <button
+                class="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </li>
+        }
+    </ul>
+</div>
+
+<autocomplete [items]="allIngredients" (selectItem)="addIngredient($event)"></autocomplete>
+
+
+<div class="my-8 text-center">
+    <button class="bg-blue-500 text-white px-2 py-1 rounded" routerLink="/meals/add">Ajouter le repas</button>
+</div>

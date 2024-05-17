@@ -2,6 +2,10 @@
     Repas
 </h1>
 
+<div class="my-8 text-center">
+    <button class="bg-blue-500 text-white px-2 py-1 rounded" routerLink="/meals/add">Ajouter un repas</button>
+</div>
+
 <div class="flex mb-4 space-x-4">
     <label class="inline-flex items-center">
         <input type="checkbox" (change)="toggleCategory('viande', $event)" class="text-blue-500">
@@ -21,9 +25,16 @@
     </label>
 </div>
 
+
+@if (filteredMeals.length > 0) {
 <div class="overflow-y-auto h-96">
-    <div *ngFor="let meal of filteredMeals" class="p-2 border-b border-gray-200">
-        <h2 class="text-xl font-semibold">{{ meal.mainDish }}</h2>
+    @for (meal of filteredMeals; track $index) {
+    <div class="p-2 border-b border-gray-200">
+        <h2 class="text-xl font-semibold">{{ meal.name }}</h2>
         <!-- <p class="text-gray-600">{{ meal.ingredients.map(i => i.name).join(', ') }}</p> -->
     </div>
+    }
 </div>
+} @else {
+<p class="italic text-center">Il n'y a pas encore de repas !</p>
+}
