@@ -1,15 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
-import { WeekMenuComponent } from '../../gui/week-menu/week-menu.component';
 
 @Component({
   selector: 'app-menu-list-component',
   standalone: true,
-  imports: [WeekMenuComponent],
+  imports: [CommonModule],
   templateUrl: './menu-list-component.component.html',
   styleUrl: './menu-list-component.component.scss'
 })
 export class MenuListComponentComponent {
+
+  days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"]
 
 
   constructor(private db: DatabaseService) {
