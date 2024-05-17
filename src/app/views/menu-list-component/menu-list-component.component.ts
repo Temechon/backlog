@@ -13,6 +13,10 @@ export class MenuListComponentComponent {
 
 
   constructor(private db: DatabaseService) {
+  }
+
+  ngOnInit() {
+    // Retrieve current menu
     const doc = this.db.getCurrentMenu();
 
     doc.then(data => {
@@ -21,6 +25,13 @@ export class MenuListComponentComponent {
     // doc.subscribe(data => {
     //   console.log("doc", data)
     // })
+
+
+    // If null, retrieve default parameters
+
+    // Generate a new week with these parameters
+
+
   }
 
 
