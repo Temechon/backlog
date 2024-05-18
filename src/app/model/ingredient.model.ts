@@ -7,11 +7,21 @@ export class Ingredient {
     isSideDish: boolean; // Indique si l'ingrédient peut être utilisé comme accompagnement
     shopCategory: string;
 
-    constructor(data: any) {
+    constructor(data: any = {}) {
         this.id = data.id || guid();
         this.name = data.name ?? "";
         this.isMeat = data.isMeat ?? false;
         this.isSideDish = data.isSideDish ?? false;
         this.shopCategory = data.shopCategory || 'Divers'
+    }
+
+    toJson() {
+        return {
+            id: this.id,
+            name: this.name,
+            isMeat: this.isMeat,
+            isSideDish: this.isSideDish,
+            shopCategory: this.shopCategory
+        };
     }
 }

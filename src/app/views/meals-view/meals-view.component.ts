@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
 import { Meal } from '../../model/meal.model';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-meals-view',
@@ -15,7 +15,7 @@ export class MealsViewComponent {
 
   filteredMeals: Array<Meal> = [];
 
-  constructor(private db: DatabaseService) {
+  constructor(private db: DatabaseService, private router: Router) {
 
   }
 
@@ -26,11 +26,13 @@ export class MealsViewComponent {
   ngOnInit() {
     // Retrieve all meals from database
     this.db.getAllMeals().subscribe(data => {
-      for (let d of data) {
-        this.filteredMeals.push(new Meal(d['name']))
-      }
+      this.filteredMeals = data;
     })
 
+  }
+
+  openMeal(meal: Meal) {
+    return this.router.navigate(['/meals', meal.id]);
   }
 
 }
