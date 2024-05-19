@@ -1,0 +1,52 @@
+<h1 class="font-semibold text-2xl mb-12">
+    Ajouter un repas
+</h1>
+
+<div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">
+        Nom de l'ingrédient
+    </label>
+    <input type="text" [(ngModel)]="ingredient.name"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+</div>
+
+<div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2">
+        Catégorie d'achat
+    </label>
+    <select [(ngModel)]="ingredient.shopCategory"
+        class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+        <option value="legumes">Légumes</option>
+        <option value="fruits">Fruits</option>
+        <option value="viandes">Viandes</option>
+        <option value="produitsLaitiers">Produits Laitiers</option>
+        <option value="sec">Sec</option>
+        <option value="divers">Divers</option>
+    </select>
+</div>
+
+<div class="mb-4 flex items-center">
+    <input type="checkbox" id="viande" [(ngModel)]="ingredient.isMeat" class="mr-2 leading-tight">
+    <label for="viande" class="block text-gray-700 text-sm font-bold">
+        Est-ce de la viande?
+    </label>
+</div>
+
+<div class="mb-4 flex items-center">
+    <input type="checkbox" id="accompagnement" [(ngModel)]="ingredient.isSideDish" class="mr-2 leading-tight">
+    <label for="accompagnement" class="block text-gray-700 text-sm font-bold">
+        Est-ce un accompagnement?
+    </label>
+</div>
+
+
+
+<div class="my-8 text-center">
+    <button class="bg-blue-500 text-white px-2 py-1 rounded" (click)="save()">Enregistrer</button>
+</div>
+
+@if (successMessage) {
+<div class="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+    <span class="block sm:inline">{{ successMessage }}</span>
+</div>
+}

@@ -9,7 +9,7 @@ export class Meal {
     constructor(data: any = {}) {
         this.id = data.id || guid();
         this._name = data.name ?? "";
-        this.ingredients = (data.ingredients || []).map((i: any) => new Ingredient(i));
+        this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
     }
 
     get name(): string {
@@ -32,7 +32,7 @@ export class Meal {
         return {
             id: this.id,
             name: this._name,
-            ingredients: this.ingredients.map(ingredient => ingredient.toJson())
+            ingredients: this.ingredients.map(ingredient => ingredient.id)
         };
     }
 

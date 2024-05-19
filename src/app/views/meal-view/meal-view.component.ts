@@ -41,31 +41,51 @@ export class MealViewComponent {
       }
     });
 
-    // Retrieves all ingredients from database
+    // Retrieves all ingredients from database to dsplay in the ingredient list
     this.db.getAllIngredients().pipe(first()).subscribe(
       data => {
+        console.log("all ingredients", data);
+
         this.allIngredients = data;
       }
     );
 
   }
 
-  addIngredient($event: any) {
-    console.log("Ingrédient ajouté !", $event);
-
+  addIngredient($event: Ingredient) {
     this.meal.ingredients.push($event)
   }
 
-  save() {
-    this.db.saveMeal(this.meal).subscribe({
+  createNewIngredient($event: string) {
+    console.log("Creating new ingredient", $event);
+    const ing = new Ingredient({ name: $event });
+    this.addIngredient(ing);
+
+    this.db.saveMeal(this.meal).pipe(first()).subscribe(() => console.log("repas enregistré"));
+
+    this.db.saveIngredient(ing).pipe(first()).subscribe({
       next: () => {
-        this.successMessage = 'Le repas a bien été ajouté !';
+        return this.router.navigate(['/meals', this.meal.id, 'ingredient', ing.id]);
+      },
+      error: (err) => console.error("Error saving ingredient", err)
+    })
+  }
+
+  save() {
+    this.db.saveMeal(this.meal).pipe(first()).subscribe({
+      next: () => {
+        this.successMessage = 'Le repas a bien été ajouté !', this.meal;
         setTimeout(() => {
           this.router.navigate(['/meals']);
         }, 1000);
       },
       error: (err) => console.error('Error saving meal:', err)
     });
+  }
+
+  deleteIngredient(ing: Ingredient) {
+    this.meal.ingredients = this.meal.ingredients.filter(mealingredient => mealingredient.id != ing.id);
+    this.db.saveMeal(this.meal).pipe(first()).subscribe(void 0);
   }
 
 

@@ -18,7 +18,7 @@
         @for (ing of meal.ingredients; track $index) {
         <li class="flex items-center justify-between mb-2 px-2 border-b py-1">
             <span>{{ing.name}}</span>
-            <button
+            <button (click)="deleteIngredient(ing)"
                 class="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline">
                 <i class="fas fa-trash-alt"></i>
             </button>
@@ -27,7 +27,8 @@
     </ul>
 </div>
 
-<autocomplete [items]="allIngredients" (selectItem)="addIngredient($event)"></autocomplete>
+<autocomplete [items]="allIngredients" (selectItem)="addIngredient($event)" (newItem)="createNewIngredient($event)">
+</autocomplete>
 
 
 <div class="my-8 text-center">

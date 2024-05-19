@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
 import { Meal } from '../../model/meal.model';
 import { Router, RouterModule } from '@angular/router';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-meals-view',
@@ -25,10 +26,17 @@ export class MealsViewComponent {
 
   ngOnInit() {
     // Retrieve all meals from database
-    this.db.getAllMeals().subscribe(data => {
+    this.db.getAllPlatsWithAllIngredients().subscribe(data => {
       this.filteredMeals = data;
     })
 
+  }
+
+  addMeal() {
+    const meal = new Meal();
+    this.db.saveMeal(meal).pipe(first()).subscribe(() => {
+      return this.openMeal(meal);
+    })
   }
 
   openMeal(meal: Meal) {

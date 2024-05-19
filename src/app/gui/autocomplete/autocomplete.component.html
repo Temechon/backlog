@@ -1,11 +1,17 @@
 <div class="relative">
     <input type="text" [(ngModel)]="searchTerm" (input)="onSearchTermChange()" placeholder="Search..."
-        (focus)="onFocus()" (blur)="onBlur()" class="w-full p-2 border border-gray-300 rounded-md" />
-    @if (filteredItems.length > 0) {
+        (focus)="onFocus()" (blur)="onBlur()" (keydown)="onKeyDown($event)"
+        class="w-full p-2 border border-gray-300 rounded-md" />
+    @if (filteredItems.length > 0 ||showAddOption) {
     <ul class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-48 overflow-y-auto">
         @for (item of filteredItems; track $index) {
         <li class=" p-2 hover:bg-gray-200 cursor-pointer" (click)="onItemSelect(item)">
             {{ item.name }}
+        </li>
+        }
+        @if (showAddOption) {
+        <li class="p-2 hover:bg-gray-200 cursor-pointer italic text-sm" (click)="addNewItem()">
+            Ajouter un ingrédient...
         </li>
         }
     </ul>
