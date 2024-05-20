@@ -159,6 +159,21 @@ export class DatabaseService {
     );
   }
 
+  public deleteMeal(meal: Meal): Observable<void> {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const mealDocRef = doc(this.firestore, `users/${userId}/meals/${meal.id}`);
+          return from(deleteDoc(mealDocRef)).pipe(
+            map(() => void 0)
+          );
+        } else {
+          throw new Error('User is not authenticated');
+        }
+      })
+    );
+  }
+
 
   public saveIngredient(ing: Ingredient): Observable<void> {
     return this.authService.getUserId().pipe(

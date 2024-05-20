@@ -39,6 +39,12 @@ export class MealsViewComponent {
     })
   }
 
+  deleteMeal(meal: Meal, $event: Event) {
+    console.log("delete meal")
+    $event.stopPropagation();
+    this.db.deleteMeal(meal).subscribe(() => console.log("Repas effacé"));
+  }
+
   openMeal(meal: Meal) {
     return this.router.navigate(['/meals', meal.id]);
   }
