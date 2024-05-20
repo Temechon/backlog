@@ -24,18 +24,25 @@ export class SystemWeek {
  */
 export class Week {
     id: string;
-    days: Day[] = []; // Liste des jours de la semaine
-    systemWeek: SystemWeek;
 
-    constructor(systemWeek: SystemWeek) {
+    lundi: Day;
+    mardi: Day;
+    mercredi: Day;
+    jeudi: Day;
+    vendredi: Day;
+    samedi: Day;
+    dimanche: Day;
 
-        this.id = guid();
-        this.systemWeek = systemWeek;
+    constructor(data?: any) {
+        this.id = data?.id ?? guid();
 
-        for (let sd of systemWeek.systemDays) {
-            const day = new Day(sd.name);
-            this.days.push(day);
-        }
+        this.lundi = new Day(data?.lundi);
+        this.mardi = new Day(data?.mardi);
+        this.mercredi = new Day(data?.mercredi);
+        this.jeudi = new Day(data?.jeudi);
+        this.vendredi = new Day(data?.vendredi);
+        this.samedi = new Day(data?.samedi);
+        this.dimanche = new Day(data?.dimanche);
     }
 
 }

@@ -19,9 +19,12 @@ export class Day {
     name: string; // Nom du jour (par exemple, "Lundi")
     lunch: Meal; // Repas de midi
     dinner: Meal; // Repas du soir
-    constructor(name: string,) {
-        this.id = guid();
-        this.name = name;
+
+    constructor(data?: any) {
+        this.id = data?.id ?? guid();
+        this.name = data?.name ?? "";
+        this.lunch = new Meal(data?.lunch);
+        this.dinner = new Meal(data?.dinner);
     }
 }
 

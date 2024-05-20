@@ -5,7 +5,6 @@ import { AuthentificationService } from './authentification.service';
 import { Ingredient } from '../model/ingredient.model';
 import { Meal } from '../model/meal.model';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -109,17 +108,6 @@ export class DatabaseService {
     );
   }
 
-
-
-
-  public getCurrentMenu() {
-
-    // Get one document
-    return getDoc(doc(this.firestore, 'users/julian'));
-
-    // Get collections
-    // return collectionData(collection(this.firestore, 'meals'));
-  }
 
   /**
    * Returns all ingredient for the connected user
