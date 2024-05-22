@@ -1,5 +1,5 @@
 <div class="relative">
-    <input type="text" [(ngModel)]="searchTerm" (input)="onSearchTermChange()" placeholder="Chercher un ingrédient..."
+    <input type="text" [(ngModel)]="searchTerm" (input)="onSearchTermChange()" [placeholder]=placeholder
         (focus)="onFocus()" (blur)="onBlur()" (keydown)="onKeyDown($event)"
         class="w-full p-2 border border-gray-300 rounded-md" />
     @if (filteredItems.length > 0 ||showAddOption) {

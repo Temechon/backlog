@@ -16,15 +16,21 @@ export class SystemDay {
 
 export class Day {
     id: string;
-    name: string; // Nom du jour (par exemple, "Lundi")
     lunch: Meal; // Repas de midi
     dinner: Meal; // Repas du soir
 
     constructor(data?: any) {
-        this.id = data?.id ?? guid();
-        this.name = data?.name ?? "";
-        this.lunch = new Meal(data?.lunch);
-        this.dinner = new Meal(data?.dinner);
+        this.id = data.id;
+        if (data?.lunch) {
+            this.lunch = new Meal(data?.lunch);
+        } else {
+            this.lunch = null;
+        }
+        if (data?.dinner) {
+            this.dinner = new Meal(data?.dinner);
+        } else {
+            this.dinner = null;
+        }
     }
 }
 

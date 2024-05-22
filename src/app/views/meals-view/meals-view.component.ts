@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
 import { Meal } from '../../model/meal.model';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { first } from 'rxjs';
+import { WeekService } from '../../services/week.service';
 
 @Component({
   selector: 'app-meals-view',
@@ -15,9 +16,27 @@ import { first } from 'rxjs';
 export class MealsViewComponent {
 
   filteredMeals: Array<Meal> = [];
+  editMode = false;
 
-  constructor(private db: DatabaseService, private router: Router) {
+  weekid: string = "";
+  dayid: string = "";
 
+  constructor(
+    private db: DatabaseService,
+    private weekservice: WeekService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+
+    console.log("params", this.route.snapshot.paramMap)
+    console.log("data", this.route.snapshot.data);
+
+    this.editMode = this.route.snapshot.data['mode'] === 'edit';
+
+    if (!this.editMode) {
+      this.weekid = this.route.snapshot.paramMap.get("weekid");
+      this.dayid = this.route.snapshot.paramMap.get("dayid");
+    }
   }
 
   toggleCategory(categ: string, event: any) {
@@ -46,7 +65,23 @@ export class MealsViewComponent {
   }
 
   openMeal(meal: Meal) {
-    return this.router.navigate(['/meals', meal.id]);
+    if (this.editMode) {
+      return this.router.navigate(['/meals', meal.id]);
+    } else {
+      // save meal for the selected day
+      this.weekservice.getWeekById(this.weekid).pipe(first()).subscribe(week => {
+        console.log("week from db", week);
+        // local modification
+        // ...
+
+        this.weekservice.updateMealForDay(this.weekid, this.dayid, meal).pipe(first()).subscribe(() => console.log("Week saved in db"));
+
+      })
+
+      // and navigate to the week view
+      return this.router.navigate(['/week', this.weekid]);
+
+    }
   }
 
 }

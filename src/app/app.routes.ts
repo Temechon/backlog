@@ -1,21 +1,57 @@
 import { Routes } from '@angular/router';
-import { MenuListComponentComponent } from './views/menu-list-component/menu-list-component.component';
-import { MealsViewComponent } from './views/meals-view/meals-view.component';
-import { MealViewComponent } from './views/meal-view/meal-view.component';
+
 import { IngredientViewComponent } from './views/ingredient-view/ingredient-view.component';
+import { MealViewComponent } from './views/meal-view/meal-view.component';
+import { MealsViewComponent } from './views/meals-view/meals-view.component';
+import { MenuListComponent } from './views/menulist/menu-list/menu-list.component';
+import { WeekViewComponent } from './views/menulist/week-view/week-view.component';
 
 export const routes: Routes = [
-
     {
-        path: "menus",
-        component: MenuListComponentComponent
+        path: "home",
+        component: MenuListComponent,
+    },
+    {
+        path: "week",
+        children: [
+            {
+                path: "",
+                pathMatch: 'full',
+                redirectTo: "/home"
+            },
+            {
+                path: ":weekid",
+                children: [
+                    {
+                        path: "",
+                        component: WeekViewComponent,
+                    },
+                    {
+                        path: ':dayid',
+                        children: [
+                            {
+                                path: 'lunch',
+                                component: MealsViewComponent,
+                                data: { mode: 'select', mealType: 'lunch' }
+                            },
+                            {
+                                path: 'dinner',
+                                component: MealsViewComponent,
+                                data: { mode: 'select', mealType: 'dinner' }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
     },
     {
         path: "meals",
         children: [
             {
                 path: "",
-                component: MealsViewComponent
+                component: MealsViewComponent,
+                data: { mode: 'edit' }
             },
             {
                 path: ":id",
@@ -43,6 +79,6 @@ export const routes: Routes = [
     },
     {
         path: "**",
-        redirectTo: "menus"
+        redirectTo: "home"
     }
 ];

@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
 export class AutocompleteComponent<T extends { name: string }> implements OnChanges {
 
   @Input() items: T[] = [];
+  @Input() placeholder: string = ""
+
   @Output() selectItem = new EventEmitter<T>();
   @Output() newItem = new EventEmitter<string>();
 

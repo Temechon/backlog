@@ -1,3 +1,5 @@
+@if (editMode) {
+
 <h1 class="font-semibold text-2xl mb-12">
     Repas
 </h1>
@@ -5,6 +7,11 @@
 <div class="my-8 text-center">
     <button class="bg-blue-500 text-white px-2 py-1 rounded" (click)="addMeal()">Ajouter un repas</button>
 </div>
+} @else {
+<h1 class="font-semibold text-2xl mb-12">
+    Choisissez un repas
+</h1>
+}
 
 <div class="flex mb-4 space-x-4">
     <label class="inline-flex items-center">
@@ -35,8 +42,10 @@
             <h2 class="text-xl font-semibold">{{ meal.name }}</h2>
             <p class="text-sm italic text-gray-600">{{ meal.getIngredients() }}</p>
         </div>
+        @if (editMode) {
         <button class="bg-red-500 text-white px-2 py-1 rounded ml-auto" (click)="deleteMeal(meal, $event)"><i
                 class="fas fa-trash-alt"></i></button>
+        }
     </div>
 
     }

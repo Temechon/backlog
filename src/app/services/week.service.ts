@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { AuthentificationService } from './authentification.service';
-import { Observable, switchMap, from, map } from 'rxjs';
+import { Observable, switchMap, from, map, catchError, of } from 'rxjs';
 import { Week } from '../model/week.model';
+import { Meal } from '../model/meal.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,21 +19,17 @@ export class WeekService {
 
 
   /**
-   * Retrieve the menu list for the current week
+   * Retrieve the currentWeek attribute for this user
    */
-  getCurrentWeek(): Observable<Week> {
+  getCurrentWeek(): Observable<string> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
           const userDocRef = doc(this.firestore, `users/${userId}`);
           return from(getDoc(userDocRef)).pipe(
-            switchMap(userDocSnap => {
+            map(userDocSnap => {
               if (userDocSnap.exists()) {
-                const currentWeekId = userDocSnap.data()['currentWeek'];
-                const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${currentWeekId}`);
-                return from(getDoc(weekDocRef)).pipe(
-                  map(weekDocSnap => new Week(weekDocSnap.data()))
-                );
+                return userDocSnap.data()['currentWeek'] ?? "";
               } else {
                 throw new Error('User document not found');
               }
@@ -45,8 +42,47 @@ export class WeekService {
     );
   }
 
+  /**
+ * Retrieve a week document by its ID for the authenticated user
+ */
+  getWeekById(weekId: string): Observable<Week> {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${weekId}`);
+          return from(getDoc(weekDocRef)).pipe(
+            map(weekDocSnap => {
+              const weekData = new Week(weekDocSnap.data())
+              weekData.id = weekId;
+              return weekData;
+            })
+          );
+        } else {
+          throw new Error('User is not authenticated');
+        }
+      }),
+      catchError(error => {
+        console.error('Authentication error:', error);
+        return of(null); // Return null in case of error
+      })
+    );
+  }
 
-
+  updateMealForDay(weekid: string, dayid: string, meal: Meal) {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${weekid}`);
+          const updateData = { [dayid]: meal.toJson() };
+          return from(updateDoc(weekDocRef, updateData)).pipe(
+            map(() => void 0)
+          );
+        } else {
+          throw new Error('User is not authenticated');
+        }
+      })
+    );
+  }
 
 }
 
