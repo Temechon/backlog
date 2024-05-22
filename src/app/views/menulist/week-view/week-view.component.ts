@@ -27,16 +27,11 @@ export class WeekViewComponent {
 
   ngOnInit() {
 
-    // Check if an ID is provided in the route
-    this.route.paramMap.subscribe(params => {
-      const weekid = params.get('weekid');
-      console.log("week id", weekid);
-
-      if (weekid) {
-        this.week$ = this.weekService.getWeekById(weekid)
-        this.week$.subscribe(d => console.log("week retrieved", d))
-      }
-    });
+    const weekid = this.route.snapshot.paramMap.get('weekid');
+    if (weekid) {
+      this.week$ = this.weekService.getWeekById(weekid)
+      this.week$.subscribe(d => console.log("week from db", d))
+    }
 
 
     // If null, retrieve default parameters

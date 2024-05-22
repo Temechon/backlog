@@ -32,6 +32,17 @@ export class Day {
             this.dinner = null;
         }
     }
+
+    toJson() {
+        const obj = {
+            id: this.id,
+            lunch: this.lunch?.toJson() ?? null,
+            dinner: this.dinner?.toJson() ?? null
+        };
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, value]) => value !== null && value !== undefined)
+        );
+    }
 }
 
 export class DayPreferences {

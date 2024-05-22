@@ -20,6 +20,7 @@ export class MealsViewComponent {
 
   weekid: string = "";
   dayid: string = "";
+  mealType: string = "";
 
   constructor(
     private db: DatabaseService,
@@ -36,6 +37,7 @@ export class MealsViewComponent {
     if (!this.editMode) {
       this.weekid = this.route.snapshot.paramMap.get("weekid");
       this.dayid = this.route.snapshot.paramMap.get("dayid");
+      this.mealType = this.route.snapshot.data['mealType'];
     }
   }
 
@@ -72,14 +74,23 @@ export class MealsViewComponent {
       this.weekservice.getWeekById(this.weekid).pipe(first()).subscribe(week => {
         console.log("week from db", week);
         // local modification
-        // ...
+        const day = week.getDay(this.dayid);
+        if (this.mealType === "lunch") {
+          day.lunch = meal;
+        } else {
+          day.dinner = meal;
+        }
+        // console.log(week.toJson());
 
-        this.weekservice.updateMealForDay(this.weekid, this.dayid, meal).pipe(first()).subscribe(() => console.log("Week saved in db"));
+        this.weekservice.saveWeek(week).pipe(first()).subscribe(() => {
+          console.log("Week saved in db")
+          // and navigate to the week view
+          return this.router.navigate(['/week', this.weekid]);
+
+        });
 
       })
 
-      // and navigate to the week view
-      return this.router.navigate(['/week', this.weekid]);
 
     }
   }

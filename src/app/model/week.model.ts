@@ -30,7 +30,7 @@ export class Week {
         this.id = data?.id ?? guid();
 
         for (let dayname of days) {
-            const dbday = data?.days.filter((dbobj: any) => dbobj.id === dayname).pop();
+            const dbday = data?.days?.filter((dbobj: any) => dbobj.id === dayname).pop();
             if (dbday) {
                 this.days.push(new Day({ ...dbday, id: dbday.id }))
             } else {
@@ -43,18 +43,10 @@ export class Week {
         return this.days.filter(day => day.id.toLowerCase() === name.toLowerCase()).pop();
     }
 
-    // [Symbol.iterator](): Iterator<Day> {
-    //     const days = [this.lundi, this.mardi, this.mercredi, this.jeudi, this.vendredi, this.samedi, this.dimanche];
-    //     let index = 0;
-    //     return {
-    //         next: (): IteratorResult<Day> => {
-    //             if (index < days.length) {
-    //                 return { value: days[index++], done: false };
-    //             } else {
-    //                 return { value: null, done: true };
-    //             }
-    //         }
-    //     };
-    // }
-
+    toJson() {
+        return {
+            id: this.id,
+            days: this.days.map(day => day.toJson())
+        };
+    }
 }

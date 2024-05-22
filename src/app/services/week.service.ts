@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { AuthentificationService } from './authentification.service';
 import { Observable, switchMap, from, map, catchError, of } from 'rxjs';
 import { Week } from '../model/week.model';
@@ -68,13 +68,12 @@ export class WeekService {
     );
   }
 
-  updateMealForDay(weekid: string, dayid: string, meal: Meal) {
+  saveWeek(week: Week) {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${weekid}`);
-          const updateData = { [dayid]: meal.toJson() };
-          return from(updateDoc(weekDocRef, updateData)).pipe(
+          const weekRef = doc(this.firestore, `users/${userId}/weeks/${week.id}`);
+          return from(setDoc(weekRef, week.toJson())).pipe(
             map(() => void 0)
           );
         } else {
