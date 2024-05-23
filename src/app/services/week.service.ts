@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { DocumentSnapshot, Firestore, doc, getDoc, onSnapshot, setDoc, updateDoc } from '@angular/fire/firestore';
-import { AuthentificationService } from './authentification.service';
-import { Observable, switchMap, from, map, catchError, of } from 'rxjs';
+import { Firestore, doc, getDoc, onSnapshot, setDoc } from '@angular/fire/firestore';
+import { Observable, catchError, combineLatest, from, map, of, switchMap } from 'rxjs';
 import { Week } from '../model/week.model';
-import { Meal } from '../model/meal.model';
+import { AuthentificationService } from './authentification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,10 +33,19 @@ export class WeekService {
         return this.listenDoc(userDocRef);
       })
     )
-    // const userDocRef = doc(this.firestore, `users/julian/weeks/week1`);
-    // const unsub = onSnapshot(userDocRef, data => {
-    //   console.log(data.data());
-    // })
+  }
+
+  getAllIngredientFromWeek(weekid: string) {
+    return this.getWeekById(weekid).pipe(
+      switchMap(week => {
+        // Build ingredients of all meals
+        const ids = [];
+        for (let day of week.days) {
+          ids.push(...day?.lunch.ingredients.map(ing => ing.id));
+          ids.push(...day?.dinner.ingredients.map(ing => ing.id));
+        }
+      })
+    )
   }
 
 
