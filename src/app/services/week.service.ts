@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
+import { DocumentSnapshot, Firestore, doc, getDoc, onSnapshot, setDoc, updateDoc } from '@angular/fire/firestore';
 import { AuthentificationService } from './authentification.service';
 import { Observable, switchMap, from, map, catchError, of } from 'rxjs';
 import { Week } from '../model/week.model';
@@ -16,6 +16,30 @@ export class WeekService {
   constructor(
     private authService: AuthentificationService) {
   }
+
+  private listenDoc(reference) {
+    return new Observable(observer => {
+      return onSnapshot(reference,
+        (snapshot => observer.next(snapshot.data())),
+        (error => observer.error(error.message))
+      );
+    });
+  }
+
+
+  testSnapshot() {
+    return this.authService.getUserId().pipe(
+      switchMap((user: string) => {
+        const userDocRef = doc(this.firestore, `users/julian/weeks/week1`);
+        return this.listenDoc(userDocRef);
+      })
+    )
+    // const userDocRef = doc(this.firestore, `users/julian/weeks/week1`);
+    // const unsub = onSnapshot(userDocRef, data => {
+    //   console.log(data.data());
+    // })
+  }
+
 
 
   /**
@@ -50,9 +74,9 @@ export class WeekService {
       switchMap(userId => {
         if (userId) {
           const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${weekId}`);
-          return from(getDoc(weekDocRef)).pipe(
+          return this.listenDoc(weekDocRef).pipe(
             map(weekDocSnap => {
-              const weekData = new Week(weekDocSnap.data())
+              const weekData = new Week(weekDocSnap)
               weekData.id = weekId;
               return weekData;
             })

@@ -3,5 +3,10 @@
 </h1>
 
 @for (day of (week$ | async)?.days; track $index) {
-<day [day]="day"></day>
+
+<day [day]="day" [currentday]="currentday === day.id"></day>
+
 }
+<div class="my-8 text-center">
+    <button class="bg-blue-500 text-white px-2 py-1 rounded" (click)="newWeek()">Commencer une nouvelle semaine</button>
+</div>

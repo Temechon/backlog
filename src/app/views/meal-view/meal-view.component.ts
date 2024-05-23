@@ -28,24 +28,22 @@ export class MealViewComponent {
   ngOnInit() {
     this.meal = new Meal();
 
-    // Check if an ID is provided in the route
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.db.getMealById(id).pipe(first()).subscribe(
-          mealData => {
-            this.meal = mealData;
-            this.isEdition = true;
-          }
-        );
-      }
-    });
+    const mealid = this.route.snapshot.paramMap.get("id");
+
+    if (mealid) {
+
+      this.db.getMealById(mealid).pipe(first()).subscribe(
+        mealData => {
+          this.meal = mealData;
+          this.isEdition = true;
+        }
+      );
+    }
 
     // Retrieves all ingredients from database to dsplay in the ingredient list
     this.db.getAllIngredients().pipe(first()).subscribe(
       data => {
         console.log("all ingredients", data);
-
         this.allIngredients = data;
       }
     );

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Auth, authState } from '@angular/fire/auth';
+import { Injectable, inject } from '@angular/core';
+import { Auth, authState, getAuth, onAuthStateChanged, user } from '@angular/fire/auth';
 import { Observable, map, of } from 'rxjs';
 
 @Injectable({
@@ -7,12 +7,14 @@ import { Observable, map, of } from 'rxjs';
 })
 export class AuthentificationService {
 
-  constructor(private auth: Auth) { }
+  private auth = inject(Auth);
 
-  getUserId(): Observable<string | null> {
-    // return authState(this.auth).pipe(
-    //   map(user => user ? user.uid : null)
-    // );
+  constructor() { }
+
+  getUserId(): Observable<string> {
+
+    // return user(this.auth);
+
     return of("julian");
   }
 }

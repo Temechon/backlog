@@ -5,6 +5,7 @@ import { MealViewComponent } from './views/meal-view/meal-view.component';
 import { MealsViewComponent } from './views/meals-view/meals-view.component';
 import { MenuListComponent } from './views/menulist/menu-list/menu-list.component';
 import { WeekViewComponent } from './views/menulist/week-view/week-view.component';
+import { ShopListViewComponent } from './views/shop-list-view/shop-list-view.component';
 
 export const routes: Routes = [
     {
@@ -76,6 +77,10 @@ export const routes: Routes = [
                 ]
             }
         ]
+    },
+    {
+        path: "shoppinglist",
+        component: ShopListViewComponent
     },
     {
         path: "**",

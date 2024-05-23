@@ -17,6 +17,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 export class WeekViewComponent {
 
   week$: Observable<Week>;
+  currentday: string = "";
 
 
   constructor(
@@ -33,11 +34,13 @@ export class WeekViewComponent {
       this.week$.subscribe(d => console.log("week from db", d))
     }
 
+    // Get current day
+    const daysOfWeek = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    const today = new Date();
+    this.currentday = daysOfWeek[today.getDay()];
+  }
 
-    // If null, retrieve default parameters
-
-    // Generate a new week with these parameters
-
+  newWeek() {
 
   }
 }

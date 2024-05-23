@@ -65,7 +65,7 @@ export class DatabaseService {
    * Returns a list of ingredient from ids given in parameters
    * @returns 
    */
-  private getIngredients(ids: string[], userId: string): Observable<Ingredient[]> {
+  public getIngredients(ids: string[], userId: string): Observable<Ingredient[]> {
     if (!ids.length) return of([]);
     const ingredientObservables = ids.map(id => this.getIngredient(id, userId));
     return combineLatest(ingredientObservables);
@@ -118,7 +118,7 @@ export class DatabaseService {
         if (userId) {
           const ingredientsCollection = collection(this.firestore, `users/${userId}/ingredients`);
           return collectionData(ingredientsCollection, { idField: 'id' }).pipe(
-            tap(data => console.log(data))).pipe(
+            tap(data => console.log("ingredient in db", data))).pipe(
               map(ingredients => ingredients.map(ing => new Ingredient(ing)))
             ) as Observable<Ingredient[]>;
         } else {

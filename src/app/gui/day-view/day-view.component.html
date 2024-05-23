@@ -1,5 +1,5 @@
-<div class="flex flex-col space-y-4">
-    <div class="border">
+<div class="flex flex-col space-y-4 mb-4">
+    <div class="border-2" [ngClass]="{'border-red-500': currentday}">
         <div class="px-4 py-2 flex justify-between items-center bg-indigo-100 font-semibold">
             {{day.id}}
         </div>

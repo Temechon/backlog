@@ -47,7 +47,7 @@ export class MealsViewComponent {
 
   ngOnInit() {
     // Retrieve all meals from database
-    this.db.getAllPlatsWithAllIngredients().subscribe(data => {
+    this.db.getAllPlatsWithAllIngredients().pipe(first()).subscribe(data => {
       this.filteredMeals = data;
     })
 
