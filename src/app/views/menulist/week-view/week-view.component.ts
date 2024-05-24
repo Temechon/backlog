@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../../services/database.service';
-import { Observable, first } from 'rxjs';
+import { Observable, first, forkJoin } from 'rxjs';
 import { Week } from '../../../model/week.model';
 import { WeekService } from '../../../services/week.service';
 import { DayViewComponent } from '../../../gui/day-view/day-view.component';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-menu-list-component',
@@ -22,17 +22,21 @@ export class WeekViewComponent {
 
   constructor(
     private weekService: WeekService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
   }
 
   ngOnInit() {
 
-    const weekid = this.route.snapshot.paramMap.get('weekid');
-    if (weekid) {
-      this.week$ = this.weekService.getWeekById(weekid)
-      this.week$.subscribe(d => console.log("week from db", d))
-    }
+    this.route.paramMap.subscribe(params => {
+
+      const weekid = params.get('weekid');
+      if (weekid) {
+        this.week$ = this.weekService.getWeekById(weekid)
+        this.week$.subscribe(d => console.log("week from db", d))
+      }
+    })
 
     // Get current day
     const daysOfWeek = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
@@ -41,6 +45,15 @@ export class WeekViewComponent {
   }
 
   newWeek() {
+    // creates a new week and update currentweek id
+    const newweek = new Week();
+
+    const saveWeek$ = this.weekService.saveWeek(newweek).pipe(first());
+    const updateCurrentWeek$ = this.weekService.updateCurrentWeek(newweek.id).pipe(first());
+
+    forkJoin([saveWeek$, updateCurrentWeek$]).subscribe(() => {
+      this.router.navigate(['week', newweek.id]);
+    })
 
   }
 }

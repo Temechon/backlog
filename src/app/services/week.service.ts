@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc, onSnapshot, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, onSnapshot, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Observable, catchError, combineLatest, from, map, of, switchMap } from 'rxjs';
 import { Week } from '../model/week.model';
 import { AuthentificationService } from './authentification.service';
@@ -131,6 +131,19 @@ export class WeekService {
           return from(setDoc(weekRef, week.toJson())).pipe(
             map(() => void 0)
           );
+        } else {
+          throw new Error('User is not authenticated');
+        }
+      })
+    );
+  }
+
+  updateCurrentWeek(weekid: string) {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const weekRef = doc(this.firestore, `users/${userId}`);
+          return from(updateDoc(weekRef, { currentWeek: weekid }));
         } else {
           throw new Error('User is not authenticated');
         }

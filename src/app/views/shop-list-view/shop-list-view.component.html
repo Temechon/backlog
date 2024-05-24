@@ -2,12 +2,22 @@
     Liste des courses 2
 </h1>
 
-<!-- @if (ingredients$ | async; as ingredients) {
+@if (ingredients$ | async; as ingredients) {
 
-    @for (categ of ingredients; track $index) {}
-
-@for (item of ingredients['legumes']; track $index) {
-{{item.name}}
+@for (items of ingredients; track $index) {
+<div class="p-2 mb-2">
+    <span class="font-semibold text-lg">{{items[0].shopCategory | capitalizeSpaces}}</span>
+    <div class="mt-2">
+        @for (ingredient of items; track $index) {
+        <div class="px-4">
+            <label class="inline-flex items-center my-0.5">
+                <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300">
+                <span class="ml-2">{{ingredient.name}}</span>
+            </label>
+        </div>
+        }
+    </div>
+</div>
 }
 
-} -->
+}
