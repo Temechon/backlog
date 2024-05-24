@@ -3,6 +3,10 @@ import { Firestore, doc, getDoc, onSnapshot, setDoc } from '@angular/fire/firest
 import { Observable, catchError, combineLatest, from, map, of, switchMap } from 'rxjs';
 import { Week } from '../model/week.model';
 import { AuthentificationService } from './authentification.service';
+import { DatabaseService } from './database.service';
+import * as _ from 'underscore';
+import { Ingredient } from '../model/ingredient.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +17,8 @@ export class WeekService {
   private firestore: Firestore = inject(Firestore);
 
   constructor(
-    private authService: AuthentificationService) {
+    private authService: AuthentificationService,
+    private db: DatabaseService) {
   }
 
   private listenDoc(reference) {
@@ -35,14 +40,32 @@ export class WeekService {
     )
   }
 
-  getAllIngredientFromWeek(weekid: string) {
-    return this.getWeekById(weekid).pipe(
-      switchMap(week => {
-        // Build ingredients of all meals
-        const ids = [];
-        for (let day of week.days) {
-          ids.push(...day?.lunch.ingredients.map(ing => ing.id));
-          ids.push(...day?.dinner.ingredients.map(ing => ing.id));
+  getAllIngredientFromWeek(): Observable<Ingredient[]> {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          return this.getCurrentWeek().pipe(
+            switchMap(weekid => {
+              return this.getWeekById(weekid).pipe(
+                switchMap(week => {
+                  // Build ingredients of all meals
+                  const ids = [];
+                  for (let day of week.days) {
+                    if (day.lunch) {
+                      ids.push(...day.lunch.ingredients.map(ing => ing.id));
+                    }
+                    if (day.dinner) {
+                      ids.push(...day.dinner.ingredients.map(ing => ing.id));
+                    }
+                  }
+                  const uniq = _.chain(ids).compact().uniq().value();
+                  console.log("Ingredients uniques", uniq);
+                  return this.db.getIngredients(uniq, userId);
+
+                })
+              )
+            })
+          )
         }
       })
     )

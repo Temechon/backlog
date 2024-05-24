@@ -1,22 +1,23 @@
 import { Component } from '@angular/core';
-import { DatabaseService } from '../../services/database.service';
+import { Observable, map } from 'rxjs';
+import * as _ from 'underscore';
+import { Ingredient } from '../../model/ingredient.model';
 import { WeekService } from '../../services/week.service';
-import { first } from 'rxjs';
-import { Week } from '../../model/week.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-shop-list-view',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './shop-list-view.component.html',
   styleUrl: './shop-list-view.component.scss'
 })
 export class ShopListViewComponent {
 
-  constructor(
-    private db: DatabaseService,
-    private weekService: WeekService) {
+  ingredients$: Observable<any>;
 
+  constructor(
+    private weekService: WeekService) {
   }
 
   ngOnInit() {
@@ -40,7 +41,11 @@ export class ShopListViewComponent {
 
     //   })
     // })
-    this.weekService.testSnapshot().subscribe(data => console.log(data))
+    this.ingredients$ = this.weekService.getAllIngredientFromWeek().pipe(
+      map((ingredients: Ingredient[]) => _.toArray(_.groupBy(ingredients, "shopCategory")))
+    )
+
+    this.ingredients$.subscribe(data => console.log(data));
   }
 
 }
