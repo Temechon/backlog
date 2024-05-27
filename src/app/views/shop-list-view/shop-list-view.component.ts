@@ -16,6 +16,7 @@ import { CapitalizeSpacesPipe } from '../../capitalizeSpaces.pipe';
 export class ShopListViewComponent {
 
   ingredients$: Observable<any>;
+  shoplist: Array<string> = [];
 
   constructor(
     private weekService: WeekService) {
@@ -28,6 +29,10 @@ export class ShopListViewComponent {
     )
 
     this.ingredients$.subscribe(data => console.log(data));
+  }
+
+  addShop() {
+
   }
 
 }

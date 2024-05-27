@@ -1,5 +1,6 @@
 import { guid } from "../app.component";
 import { Day, SystemDay } from "./day.model";
+import * as _ from 'underscore';
 
 const days = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 
@@ -48,5 +49,10 @@ export class Week {
             id: this.id,
             days: this.days.map(day => day.toJson())
         };
+    }
+
+    replace(day: Day) {
+        const index = _.findIndex(this.days, (d: Day) => d.id === day.id);
+        this.days[index] = day;
     }
 }

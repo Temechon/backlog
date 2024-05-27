@@ -31,20 +31,11 @@ export class WeekService {
   }
 
 
-  testSnapshot() {
-    return this.authService.getUserId().pipe(
-      switchMap((user: string) => {
-        const userDocRef = doc(this.firestore, `users/julian/weeks/week1`);
-        return this.listenDoc(userDocRef);
-      })
-    )
-  }
-
   getAllIngredientFromWeek(): Observable<Ingredient[]> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          return this.getCurrentWeek().pipe(
+          return this.getCurrentWeekId().pipe(
             switchMap(weekid => {
               return this.getWeekById(weekid).pipe(
                 switchMap(week => {
@@ -76,7 +67,7 @@ export class WeekService {
   /**
    * Retrieve the currentWeek attribute for this user
    */
-  getCurrentWeek(): Observable<string> {
+  getCurrentWeekId(): Observable<string> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {

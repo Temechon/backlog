@@ -17,6 +17,6 @@ export class MenuListComponent {
   }
 
   ngOnInit() {
-    this.weekService.getCurrentWeek().pipe(first()).subscribe(weekid => this.router.navigate(["/week", weekid]));
+    this.weekService.getCurrentWeekId().pipe(first()).subscribe(weekid => this.router.navigate(["/week", weekid]));
   }
 }

@@ -43,6 +43,14 @@ export class Day {
             Object.entries(obj).filter(([_, value]) => value !== null && value !== undefined)
         );
     }
+
+    removeMeal(meal: string) {
+        if (meal === 'lunch') {
+            this.lunch = null;
+        } if (meal === 'dinner') {
+            this.dinner = null;
+        }
+    }
 }
 
 export class DayPreferences {
