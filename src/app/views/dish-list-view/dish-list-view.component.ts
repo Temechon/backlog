@@ -5,15 +5,15 @@ import { Meal } from '../../model/meal.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { first } from 'rxjs';
 import { WeekService } from '../../services/week.service';
+import { Ingredient } from '../../model/ingredient.model';
 
 @Component({
   selector: 'app-meals-view',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './meals-view.component.html',
-  styleUrl: './meals-view.component.scss'
+  templateUrl: './dish-list-view.component.html'
 })
-export class MealsViewComponent {
+export class DishListViewComponent {
 
   filteredMeals: Array<Meal> = [];
   editMode = false;
@@ -53,11 +53,8 @@ export class MealsViewComponent {
 
   }
 
-  addMeal() {
-    const meal = new Meal();
-    this.db.saveMeal(meal).pipe(first()).subscribe(() => {
-      return this.openMeal(meal);
-    })
+  addIngredient() {
+    return this.router.navigate(['/ingredient'])
   }
 
   deleteMeal(meal: Meal, $event: Event) {
@@ -66,9 +63,9 @@ export class MealsViewComponent {
     this.db.deleteMeal(meal).subscribe(() => console.log("Repas effacé"));
   }
 
-  openMeal(meal: Meal) {
+  openMeal(meal?: Meal) {
     if (this.editMode) {
-      return this.router.navigate(['/meals', meal.id]);
+      return this.router.navigate(['/meals', "new"]);
     } else {
       // save meal for the selected day
       this.weekservice.getWeekById(this.weekid).pipe(first()).subscribe(week => {
@@ -76,11 +73,10 @@ export class MealsViewComponent {
         // local modification
         const day = week.getDay(this.dayid);
         if (this.mealType === "lunch") {
-          day.lunch = meal;
+          day.lunch.push(meal);
         } else {
-          day.dinner = meal;
+          day.dinner.push(meal);
         }
-        // console.log(week.toJson());
 
         this.weekservice.saveWeek(week).pipe(first()).subscribe(() => {
           console.log("Week saved in db")

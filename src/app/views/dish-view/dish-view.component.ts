@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Meal } from '../../model/meal.model';
+import { Dish, Meal } from '../../model/meal.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,12 +12,11 @@ import { first } from 'rxjs';
   selector: 'add-meal-view',
   standalone: true,
   imports: [RouterModule, CommonModule, FormsModule, AutocompleteComponent],
-  templateUrl: './meal-view.component.html',
-  styleUrl: './meal-view.component.scss'
+  templateUrl: './dish-view.component.html',
 })
-export class MealViewComponent {
+export class DishViewComponent {
 
-  meal: Meal;
+  dish: Dish;
   allIngredients: Ingredient[] = []
   successMessage: string;
   isEdition: boolean = false;
@@ -26,18 +25,23 @@ export class MealViewComponent {
 
   }
   ngOnInit() {
-    this.meal = new Meal();
+    this.dish = new Dish();
 
-    const mealid = this.route.snapshot.paramMap.get("id");
+    const dishid = this.route.snapshot.paramMap.get("id");
+    if (dishid) {
 
-    if (mealid) {
+      if (dishid === 'new') {
+        this.isEdition = true;
+      }
 
-      this.db.getMealById(mealid).pipe(first()).subscribe(
-        mealData => {
-          this.meal = mealData;
-          this.isEdition = true;
-        }
-      );
+      if (dishid !== 'new') {
+        this.db.getDishById(dishid).pipe(first()).subscribe(
+          dishData => {
+            this.dish = dishData;
+            this.isEdition = true;
+          }
+        );
+      }
     }
 
     // Retrieves all ingredients from database to dsplay in the ingredient list
@@ -51,7 +55,7 @@ export class MealViewComponent {
   }
 
   addIngredient($event: Ingredient) {
-    this.meal.ingredients.push($event)
+    this.dish.ingredients.push($event)
   }
 
   createNewIngredient($event: string) {
@@ -59,20 +63,20 @@ export class MealViewComponent {
     const ing = new Ingredient({ name: $event });
     this.addIngredient(ing);
 
-    this.db.saveMeal(this.meal).pipe(first()).subscribe(() => console.log("repas enregistré"));
+    this.db.saveDish(this.dish).pipe(first()).subscribe(() => console.log("repas enregistré"));
 
     this.db.saveIngredient(ing).pipe(first()).subscribe({
       next: () => {
-        return this.router.navigate(['/meals', this.meal.id, 'ingredient', ing.id]);
+        return this.router.navigate(['/ingredients', ing.id]);
       },
       error: (err) => console.error("Error saving ingredient", err)
     })
   }
 
   save() {
-    this.db.saveMeal(this.meal).pipe(first()).subscribe({
+    this.db.saveDish(this.dish).pipe(first()).subscribe({
       next: () => {
-        this.successMessage = 'Le repas a bien été ajouté !', this.meal;
+        this.successMessage = 'Le repas a bien été ajouté !', this.dish;
         setTimeout(() => {
           this.router.navigate(['/meals']);
         }, 1000);
@@ -82,8 +86,8 @@ export class MealViewComponent {
   }
 
   deleteIngredient(ing: Ingredient) {
-    this.meal.ingredients = this.meal.ingredients.filter(mealingredient => mealingredient.id != ing.id);
-    this.db.saveMeal(this.meal).pipe(first()).subscribe(void 0);
+    this.dish.ingredients = this.dish.ingredients.filter(mealingredient => mealingredient.id != ing.id);
+    this.db.saveDish(this.dish).pipe(first()).subscribe(void 0);
   }
 
 

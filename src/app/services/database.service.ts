@@ -3,7 +3,7 @@ import { Firestore, addDoc, collection, collectionData, deleteDoc, doc, docData,
 import { Observable, catchError, combineLatest, first, forkJoin, from, lastValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { AuthentificationService } from './authentification.service';
 import { Ingredient } from '../model/ingredient.model';
-import { Meal } from '../model/meal.model';
+import { Dish, Meal } from '../model/meal.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,15 +29,15 @@ export class DatabaseService {
   }
 
   /**
-   * Retrieves a single meal for a given user. 
+   * Retrieves a single dish for a given user. 
    * Ingredients are not present in the result object.
    */
-  private getMeal(userId: string, mealId: string): Observable<Meal> {
-    const mealDoc = doc(this.firestore, `users/${userId}/meals/${mealId}`);
-    return docData(mealDoc, { idField: 'id' }).pipe(
+  private getDish(userId: string, mealId: string): Observable<Dish> {
+    const dishDoc = doc(this.firestore, `users/${userId}/products/${mealId}`);
+    return docData(dishDoc, { idField: 'id' }).pipe(
       map(ingData => {
         if (ingData) {
-          return new Meal(ingData);
+          return new Dish(ingData);
         } else {
           throw new Error('Meal not found : ' + mealId);
         }
@@ -116,7 +116,7 @@ export class DatabaseService {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const ingredientsCollection = collection(this.firestore, `users/${userId}/ingredients`);
+          const ingredientsCollection = collection(this.firestore, `users/${userId}/products`);
           return collectionData(ingredientsCollection, { idField: 'id' }).pipe(
             tap(data => console.log("ingredient in db", data))).pipe(
               map(ingredients => ingredients.map(ing => new Ingredient(ing)))
@@ -132,11 +132,11 @@ export class DatabaseService {
    * Saves a meal to Firestore. If a meal with the same ID already exists,
    * it updates the existing meal. Otherwise, it creates a new meal document.
    */
-  public saveMeal(meal: Meal): Observable<void> {
+  public saveDish(meal: Dish): Observable<void> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const mealDocRef = doc(this.firestore, `users/${userId}/meals/${meal.id}`);
+          const mealDocRef = doc(this.firestore, `users/${userId}/products/${meal.id}`);
           return from(setDoc(mealDocRef, meal.toJson())).pipe(
             map(() => void 0)
           );
@@ -178,26 +178,26 @@ export class DatabaseService {
     );
   }
 
-  public getMealById(mealId: string): Observable<Meal> {
+  public getDishById(dishId: string): Observable<Dish> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          return this.getMeal(userId, mealId).pipe(
-            switchMap(plat => {
-              if (plat.ingredients.length === 0) {
-                return of(plat); // If no ingredients, return the plat as is
+          return this.getDish(userId, dishId).pipe(
+            switchMap(dish => {
+              if (dish.ingredients.length === 0) {
+                return of(dish); // If no ingredients, return the plat as is
               }
-              const ingredientIds = plat.ingredients.map(ing => ing.id);
-              console.log("id from meal", ingredientIds);
+              const ingredientIds = dish.ingredients.map(ing => ing.id);
+              console.log("getDishById -> ingredients ids", ingredientIds);
 
               return this.getIngredients(ingredientIds, userId).pipe(
                 map(ingredients => {
-                  const platIngredients = plat.ingredients
+                  const platIngredients = dish.ingredients
                     .map(id => ingredients.find(ing => ing.id === id.id))
                     .filter(Boolean) as Ingredient[];
 
-                  plat.ingredients = platIngredients;
-                  return plat;
+                  dish.ingredients = platIngredients;
+                  return dish;
                 })
               );
             })

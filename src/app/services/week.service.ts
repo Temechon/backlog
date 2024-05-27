@@ -41,12 +41,15 @@ export class WeekService {
                 switchMap(week => {
                   // Build ingredients of all meals
                   const ids = [];
+                  if (week.days.length === 0) {
+                    return of([]);
+                  }
                   for (let day of week.days) {
-                    if (day.lunch) {
-                      ids.push(...day.lunch.ingredients.map(ing => ing.id));
+                    for (let dish of day.lunch) {
+                      ids.push(...dish.ingredients.map(ing => ing.id));
                     }
-                    if (day.dinner) {
-                      ids.push(...day.dinner.ingredients.map(ing => ing.id));
+                    for (let dish of day.dinner) {
+                      ids.push(...dish.ingredients.map(ing => ing.id));
                     }
                   }
                   const uniq = _.chain(ids).compact().uniq().value();
@@ -119,9 +122,7 @@ export class WeekService {
       switchMap(userId => {
         if (userId) {
           const weekRef = doc(this.firestore, `users/${userId}/weeks/${week.id}`);
-          return from(setDoc(weekRef, week.toJson())).pipe(
-            map(() => void 0)
-          );
+          return from(setDoc(weekRef, week.toJson()));
         } else {
           throw new Error('User is not authenticated');
         }

@@ -16,28 +16,29 @@ export class SystemDay {
 
 export class Day {
     id: string;
-    lunch: Meal; // Repas de midi
-    dinner: Meal; // Repas du soir
+    lunch: Array<Meal> = []; // Repas de midi
+    dinner: Array<Meal> = []; // Repas du soir
 
     constructor(data?: any) {
         this.id = data.id;
-        if (data?.lunch) {
-            this.lunch = new Meal(data?.lunch);
-        } else {
-            this.lunch = null;
+        if (data.lunch) {
+            for (let meal of data.lunch) {
+                this.lunch.push(new Meal(meal));
+            }
         }
-        if (data?.dinner) {
-            this.dinner = new Meal(data?.dinner);
-        } else {
-            this.dinner = null;
+        if (data.dinner) {
+            for (let meal of data?.dinner) {
+                this.lunch.push(new Meal(meal));
+            }
         }
+
     }
 
     toJson() {
         const obj = {
             id: this.id,
-            lunch: this.lunch?.toJson() ?? null,
-            dinner: this.dinner?.toJson() ?? null
+            lunch: this.lunch.map(meal => meal.toJson()),
+            dinner: this.dinner.map(meal => meal.toJson())
         };
         return Object.fromEntries(
             Object.entries(obj).filter(([_, value]) => value !== null && value !== undefined)

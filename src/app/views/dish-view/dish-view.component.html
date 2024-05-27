@@ -1,12 +1,12 @@
 <h1 class="font-semibold text-2xl mb-12">
-    Ajouter un repas
+    Ajouter un plat
 </h1>
 
 <div class="mb-4">
     <label class="block text-gray-700 text-sm font-bold mb-2">
         Nom du plat
     </label>
-    <input type="text" [(ngModel)]="meal.name"
+    <input type="text" [(ngModel)]="dish.name"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
 </div>
 
@@ -15,7 +15,7 @@
         Ingrédients
     </label>
     <ul class="list-disc pl-5">
-        @for (ing of meal.ingredients; track $index) {
+        @for (ing of dish.ingredients; track $index) {
         <li class="flex items-center justify-between mb-2 px-2 border-b py-1">
             <span>{{ing.name}}</span>
             <button (click)="deleteIngredient(ing)"

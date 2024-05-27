@@ -1,38 +1,59 @@
 import { guid } from "../app.component";
 import { Ingredient } from "./ingredient.model";
 
-export class Meal {
+
+export class Dish {
     id: string;
-    private _name: string;
+    name: string;
     ingredients: Ingredient[] = []; // Liste des ingrédients
 
     constructor(data: any = {}) {
         this.id = data.id || guid();
-        this._name = data.name ?? "";
+        this.name = data.name ?? "";
         this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
-    }
-
-    get name(): string {
-        if (this._name) {
-            return this._name;
-        }
-
-        if (this.ingredients.length == 0) {
-            return "";
-        }
-        // returns the ingredients list in order, separated by spaces
-        return this.ingredients.map(ing => ing.name).join(", ");
-    }
-
-    set name(n: string) {
-        this._name = n;
     }
 
     toJson() {
         return {
             id: this.id,
-            name: this._name,
-            ingredients: this.ingredients.map(ingredient => ingredient.id)
+            name: this.name,
+            ingredients: this.ingredients.map(ing => ing.id)
+        };
+    }
+
+}
+
+export class Meal {
+    id: string;
+    ingredients: Ingredient[] = []; // Liste des ingrédients
+    mainDish: Dish;
+
+    constructor(data: any = {}) {
+        this.id = data.id || guid();
+        this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
+        this.mainDish = new Dish(data.dish);
+    }
+
+    get name(): string {
+        let name = "";
+        if (this.mainDish) {
+            name = this.mainDish.name;
+        }
+
+        if (this.ingredients.length == 0) {
+            return name;
+        }
+        // returns the ingredients list in order, separated by spaces
+        name += this.ingredients.map(ing => ing.name).join(", ");
+
+        return name;
+    }
+
+    toJson() {
+        return {
+            id: this.id,
+            ingredients: this.ingredients.map(ingredient => ingredient.id),
+            mainDish: this.mainDish.toJson()
         };
     }
 

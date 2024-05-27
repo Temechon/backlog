@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { DishListViewComponent } from './views/dish-list-view/dish-list-view.component';
+import { DishViewComponent } from './views/dish-view/dish-view.component';
 import { IngredientViewComponent } from './views/ingredient-view/ingredient-view.component';
-import { MealViewComponent } from './views/meal-view/meal-view.component';
-import { MealsViewComponent } from './views/meals-view/meals-view.component';
 import { MenuListComponent } from './views/menulist/menu-list/menu-list.component';
 import { WeekViewComponent } from './views/menulist/week-view/week-view.component';
 import { ShopListViewComponent } from './views/shop-list-view/shop-list-view.component';
@@ -32,12 +32,12 @@ export const routes: Routes = [
                         children: [
                             {
                                 path: 'lunch',
-                                component: MealsViewComponent,
+                                component: DishListViewComponent,
                                 data: { mode: 'select', mealType: 'lunch' }
                             },
                             {
                                 path: 'dinner',
-                                component: MealsViewComponent,
+                                component: DishListViewComponent,
                                 data: { mode: 'select', mealType: 'dinner' }
                             }
                         ]
@@ -51,7 +51,7 @@ export const routes: Routes = [
         children: [
             {
                 path: "",
-                component: MealsViewComponent,
+                component: DishListViewComponent,
                 data: { mode: 'edit' }
             },
             {
@@ -59,22 +59,22 @@ export const routes: Routes = [
                 children: [
                     {
                         path: "",
-                        component: MealViewComponent
-                    },
-                    {
-                        path: "ingredient",
-                        children: [
-                            {
-                                path: "",
-                                component: IngredientViewComponent
-                            },
-                            {
-                                path: ":iding",
-                                component: IngredientViewComponent
-                            }
-                        ]
+                        component: DishViewComponent
                     }
                 ]
+            }
+        ]
+    },
+    {
+        path: "ingredient",
+        children: [
+            {
+                path: "",
+                component: IngredientViewComponent
+            },
+            {
+                path: ":iding",
+                component: IngredientViewComponent
             }
         ]
     },

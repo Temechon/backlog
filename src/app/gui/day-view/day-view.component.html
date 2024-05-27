@@ -13,9 +13,11 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='lunch'}">
-            @if (day.lunch) {
+            @if (day.lunch.length > 0) {
             <div (click)="editMeal($event, 'lunch')">
-                {{day.lunch.name}}
+                @for (dish of day.lunch; track $index) {
+                {{dish.name}}
+                }
             </div>
             } @else {
             <div (click)="addMealToDay(day, 'lunch')">Clique ici pour ajouter un repas !</div>
@@ -23,10 +25,12 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='dinner'}">
-            @if (day.dinner) {
+            @if (day.dinner.length > 0) {
 
             <div (click)="editMeal($event,'dinner')">
-                {{day.dinner.name}}
+                @for (dish of day.dinner; track $index) {
+                {{dish.name}}
+                }
             </div>
             } @else {
             <div (click)="addMealToDay(day, 'dinner')">Clique ici pour ajouter un repas !</div>
