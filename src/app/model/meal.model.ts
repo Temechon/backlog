@@ -13,6 +13,10 @@ export class Dish {
         this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
     }
 
+    getIngredients(): string {
+        return this.ingredients.map(ing => ing.name).join(', ');
+    }
+
     toJson() {
         return {
             id: this.id,

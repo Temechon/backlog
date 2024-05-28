@@ -9,7 +9,7 @@ import { DatabaseService } from '../../services/database.service';
 import { first } from 'rxjs';
 
 @Component({
-  selector: 'add-meal-view',
+  selector: 'dish-view',
   standalone: true,
   imports: [RouterModule, CommonModule, FormsModule, AutocompleteComponent],
   templateUrl: './dish-view.component.html',
@@ -19,7 +19,6 @@ export class DishViewComponent {
   dish: Dish;
   allIngredients: Ingredient[] = []
   successMessage: string;
-  isEdition: boolean = false;
 
   constructor(private db: DatabaseService, private router: Router, private route: ActivatedRoute) {
 
@@ -29,19 +28,11 @@ export class DishViewComponent {
 
     const dishid = this.route.snapshot.paramMap.get("id");
     if (dishid) {
-
-      if (dishid === 'new') {
-        this.isEdition = true;
-      }
-
-      if (dishid !== 'new') {
-        this.db.getDishById(dishid).pipe(first()).subscribe(
-          dishData => {
-            this.dish = dishData;
-            this.isEdition = true;
-          }
-        );
-      }
+      this.db.getDishById(dishid).pipe(first()).subscribe(
+        dishData => {
+          this.dish = dishData;
+        }
+      );
     }
 
     // Retrieves all ingredients from database to dsplay in the ingredient list
@@ -67,7 +58,7 @@ export class DishViewComponent {
 
     this.db.saveIngredient(ing).pipe(first()).subscribe({
       next: () => {
-        return this.router.navigate(['/ingredients', ing.id]);
+        return this.router.navigate(['/ingredient', ing.id]);
       },
       error: (err) => console.error("Error saving ingredient", err)
     })

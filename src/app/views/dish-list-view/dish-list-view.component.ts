@@ -1,11 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DatabaseService } from '../../services/database.service';
-import { Meal } from '../../model/meal.model';
+import { Dish, Meal } from '../../model/meal.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { first } from 'rxjs';
+import { Observable, combineLatest, first, map } from 'rxjs';
 import { WeekService } from '../../services/week.service';
 import { Ingredient } from '../../model/ingredient.model';
+
+
+interface DishListData {
+  dishes: Dish[];
+  ingredients: Ingredient[];
+
+}
 
 @Component({
   selector: 'app-meals-view',
@@ -13,14 +20,13 @@ import { Ingredient } from '../../model/ingredient.model';
   imports: [CommonModule, RouterModule],
   templateUrl: './dish-list-view.component.html'
 })
+
 export class DishListViewComponent {
 
-  filteredMeals: Array<Meal> = [];
-  editMode = false;
+  filteredDishes: Observable<Dish[]>;
+  filteredIngredients: Observable<Ingredient[]>;
 
-  weekid: string = "";
-  dayid: string = "";
-  mealType: string = "";
+  data$: Observable<DishListData>;
 
   constructor(
     private db: DatabaseService,
@@ -29,27 +35,29 @@ export class DishListViewComponent {
     private route: ActivatedRoute
   ) {
 
-    console.log("params", this.route.snapshot.paramMap)
-    console.log("data", this.route.snapshot.data);
-
-    this.editMode = this.route.snapshot.data['mode'] === 'edit';
-
-    if (!this.editMode) {
-      this.weekid = this.route.snapshot.paramMap.get("weekid");
-      this.dayid = this.route.snapshot.paramMap.get("dayid");
-      this.mealType = this.route.snapshot.data['mealType'];
-    }
   }
 
   toggleCategory(categ: string, event: any) {
-
+    // todo
   }
 
   ngOnInit() {
     // Retrieve all meals from database
-    this.db.getAllPlatsWithAllIngredients().pipe(first()).subscribe(data => {
-      this.filteredMeals = data;
-    })
+    // this.db.getAllPlatsWithAllIngredients().pipe(first()).subscribe(data => {
+    //   this.filteredMeals = data;
+    // })
+
+    // get all dishes and all ingredients
+    this.filteredDishes = this.db.getAllDishes();
+    this.filteredIngredients = this.db.getAllIngredients();
+
+    this.data$ = combineLatest([this.filteredDishes, this.filteredIngredients])
+      .pipe(map(([dishes, ingredients]) => {
+        return {
+          dishes,
+          ingredients
+        }
+      }))
 
   }
 
@@ -57,38 +65,23 @@ export class DishListViewComponent {
     return this.router.navigate(['/ingredient'])
   }
 
-  deleteMeal(meal: Meal, $event: Event) {
-    console.log("delete meal")
+  newDish() {
+    // if (this.editMode) {
+    const dish = new Dish();
+    this.db.saveDish(dish).pipe(first()).subscribe(() => this.openDish(dish))
+  }
+  openDish(dish: Dish) {
+    return this.router.navigate(['/dish', dish.id]);
+  }
+
+  deleteDish(dish: Dish, $event) {
     $event.stopPropagation();
-    this.db.deleteMeal(meal).subscribe(() => console.log("Repas effacé"));
+    this.db.deleteDish(dish).pipe(first()).subscribe(() => console.log("Repas effacé"));
+
   }
+  deleteIngredient(ing: Ingredient, $event) {
+    $event.stopPropagation();
+    this.db.deleteIngredient(ing).pipe(first()).subscribe(() => console.log("Ingredient effacé"));
 
-  openMeal(meal?: Meal) {
-    if (this.editMode) {
-      return this.router.navigate(['/meals', "new"]);
-    } else {
-      // save meal for the selected day
-      this.weekservice.getWeekById(this.weekid).pipe(first()).subscribe(week => {
-        console.log("week from db", week);
-        // local modification
-        const day = week.getDay(this.dayid);
-        if (this.mealType === "lunch") {
-          day.lunch.push(meal);
-        } else {
-          day.dinner.push(meal);
-        }
-
-        this.weekservice.saveWeek(week).pipe(first()).subscribe(() => {
-          console.log("Week saved in db")
-          // and navigate to the week view
-          return this.router.navigate(['/week', this.weekid]);
-
-        });
-
-      })
-
-
-    }
   }
-
 }

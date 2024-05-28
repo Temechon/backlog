@@ -17,14 +17,20 @@ export class DatabaseService {
     private authService: AuthentificationService) {
   }
 
-  /**
-   * Retrieves the list of meal for a given user. 
-   * Ingredients are not present in the result object.
-   */
-  private getMeals(userId: string): Observable<Meal[]> {
-    const platsCollection = collection(this.firestore, `users/${userId}/meals`);
-    return collectionData(platsCollection, { idField: 'id' }).pipe(
-      map(data => data.map(meal => new Meal(meal)))
+
+  getAllDishes() {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const dishesCollec = collection(this.firestore, `users/${userId}/dishes`);
+          return collectionData(dishesCollec, { idField: 'id' }).pipe(
+            tap(data => console.log("dishes from database", data))).pipe(
+              map(dish => dish.map(d => new Dish(d)))
+            );
+        } else {
+          return of([]); // Handle the case where the user is not authenticated
+        }
+      })
     );
   }
 
@@ -33,7 +39,7 @@ export class DatabaseService {
    * Ingredients are not present in the result object.
    */
   private getDish(userId: string, mealId: string): Observable<Dish> {
-    const dishDoc = doc(this.firestore, `users/${userId}/products/${mealId}`);
+    const dishDoc = doc(this.firestore, `users/${userId}/dishes/${mealId}`);
     return docData(dishDoc, { idField: 'id' }).pipe(
       map(ingData => {
         if (ingData) {
@@ -75,38 +81,38 @@ export class DatabaseService {
   /**
    * Returns all meal available for the connected user. ALl meal contains all ingredients (with all data)
    */
-  getAllPlatsWithAllIngredients(): Observable<Meal[]> {
-    return this.authService.getUserId().pipe(
-      switchMap(userId => {
-        if (userId) {
-          return this.getMeals(userId).pipe(
-            switchMap(plats => {
-              const allIngredientIds = [...new Set(plats.flatMap(plat => plat.ingredients || []).map(ing => ing.id))];
-              return this.getIngredients(allIngredientIds, userId).pipe(
-                map(ingredients => {
-                  return plats.map(plat => {
-                    if (plat.ingredients.length === 0) {
-                      return plat;
-                    }
-                    // Find ingredients and filter out undefined values
-                    const platIngredients = plat.ingredients
-                      .map(id => ingredients.find(ing => ing.id === id.id))
-                      .filter(Boolean) as Ingredient[]; // Filter out undefined values
+  // getAllPlatsWithAllIngredients(): Observable<Meal[]> {
+  //   return this.authService.getUserId().pipe(
+  //     switchMap(userId => {
+  //       if (userId) {
+  //         return this.getMeals(userId).pipe(
+  //           switchMap(plats => {
+  //             const allIngredientIds = [...new Set(plats.flatMap(plat => plat.ingredients || []).map(ing => ing.id))];
+  //             return this.getIngredients(allIngredientIds, userId).pipe(
+  //               map(ingredients => {
+  //                 return plats.map(plat => {
+  //                   if (plat.ingredients.length === 0) {
+  //                     return plat;
+  //                   }
+  //                   // Find ingredients and filter out undefined values
+  //                   const platIngredients = plat.ingredients
+  //                     .map(id => ingredients.find(ing => ing.id === id.id))
+  //                     .filter(Boolean) as Ingredient[]; // Filter out undefined values
 
-                    // Update plat with filtered ingredients
-                    plat.ingredients = platIngredients;
-                    return plat;
-                  });
-                })
-              );
-            })
-          );
-        } else {
-          throw new Error("User not connected");
-        }
-      })
-    );
-  }
+  //                   // Update plat with filtered ingredients
+  //                   plat.ingredients = platIngredients;
+  //                   return plat;
+  //                 });
+  //               })
+  //             );
+  //           })
+  //         );
+  //       } else {
+  //         throw new Error("User not connected");
+  //       }
+  //     })
+  //   );
+  // }
 
 
   /**
@@ -116,11 +122,11 @@ export class DatabaseService {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const ingredientsCollection = collection(this.firestore, `users/${userId}/products`);
+          const ingredientsCollection = collection(this.firestore, `users/${userId}/ingredients`);
           return collectionData(ingredientsCollection, { idField: 'id' }).pipe(
             tap(data => console.log("ingredient in db", data))).pipe(
               map(ingredients => ingredients.map(ing => new Ingredient(ing)))
-            ) as Observable<Ingredient[]>;
+            );
         } else {
           return of([]); // Handle the case where the user is not authenticated
         }
@@ -136,7 +142,7 @@ export class DatabaseService {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const mealDocRef = doc(this.firestore, `users/${userId}/products/${meal.id}`);
+          const mealDocRef = doc(this.firestore, `users/${userId}/dishes/${meal.id}`);
           return from(setDoc(mealDocRef, meal.toJson())).pipe(
             map(() => void 0)
           );
@@ -147,11 +153,11 @@ export class DatabaseService {
     );
   }
 
-  public deleteMeal(meal: Meal): Observable<void> {
+  public deleteDish(dish: Dish): Observable<void> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {
         if (userId) {
-          const mealDocRef = doc(this.firestore, `users/${userId}/meals/${meal.id}`);
+          const mealDocRef = doc(this.firestore, `users/${userId}/dishes/${dish.id}`);
           return from(deleteDoc(mealDocRef)).pipe(
             map(() => void 0)
           );
@@ -159,6 +165,41 @@ export class DatabaseService {
           throw new Error('User is not authenticated');
         }
       })
+    );
+  }
+
+
+  public deleteIngredient(ing: Ingredient): Observable<void> {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        if (userId) {
+          const mealDocRef = doc(this.firestore, `users/${userId}/ingredients/${ing.id}`);
+          return from(deleteDoc(mealDocRef)).pipe(
+            switchMap(() => this.removeIngredientFromDishes(userId, ing.id))
+          );
+        } else {
+          throw new Error('User is not authenticated');
+        }
+      })
+    );
+  }
+
+  public removeIngredientFromDishes(userId: string, ingredientId: string): Observable<void> {
+    const dishesCollectionRef = collection(this.firestore, `users/${userId}/dishes`);
+
+    return collectionData(dishesCollectionRef).pipe(
+      switchMap(dishesSnapshot => {
+        const updateDishesObservables = dishesSnapshot.map(dishDoc => {
+          const dish = new Dish(dishDoc);
+          dish.ingredients = dish.ingredients.filter((ing: Ingredient) => ing.id !== ingredientId);
+
+          const dishDocRef = doc(this.firestore, `users/${userId}/dishes/${dish.id}`);
+          return from(setDoc(dishDocRef, dish.toJson()));
+        });
+
+        return forkJoin(updateDishesObservables);
+      }),
+      map(() => void 0)
     );
   }
 

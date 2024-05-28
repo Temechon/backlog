@@ -51,8 +51,26 @@ export const routes: Routes = [
         children: [
             {
                 path: "",
-                component: DishListViewComponent,
-                data: { mode: 'edit' }
+                component: DishListViewComponent
+            },
+            {
+                path: ":id",
+                children: [
+                    {
+                        path: "",
+                        component: DishViewComponent
+                    }
+                ]
+            }
+        ]
+    },
+
+    {
+        path: "dish",
+        children: [
+            {
+                path: "",
+                component: DishListViewComponent
             },
             {
                 path: ":id",
