@@ -71,7 +71,7 @@ export class DishListViewComponent {
     this.db.saveDish(dish).pipe(first()).subscribe(() => this.openDish(dish))
   }
   openDish(dish: Dish) {
-    return this.router.navigate(['/dish', dish.id]);
+    return this.router.navigate(['/dishes', dish.id]);
   }
 
   deleteDish(dish: Dish, $event) {

@@ -1,1 +1,27 @@
-<p>create-meal-view works!</p>
+<h1 class="font-semibold text-2xl mb-12">
+    Créer un menu
+</h1>
+
+<autocomplete [items]="allDishesAndIngredients" (selectItem)="addToMeal($event)" placeholder="Chercher...">
+</autocomplete>
+
+@if (day$ |async; as day) {
+<h1 class="font-semibold text-2xl my-12">
+    Menu de {{day.id}}
+    @if (mealType$ |async; as mealType) {
+    @if (mealType === 'lunch') {
+    midi
+    } @else {
+    soir
+    }
+    }
+
+</h1>
+
+<div>
+    @if (meal$ |async; as currentMeal) {
+    {{currentMeal.mainDish?.name}}
+    }
+</div>
+
+}

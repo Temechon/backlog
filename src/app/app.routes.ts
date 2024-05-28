@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { MenuListComponent } from './views/home/menu-list/menu-list.component';
-import { WeekViewComponent } from './views/menulist/week-view/week-view.component';
 import { DishListViewComponent } from './views/dishes/dish-list-view/dish-list-view.component';
 import { DishViewComponent } from './views/dishes/dish-view/dish-view.component';
+import { MenuListComponent } from './views/home/menu-list/menu-list.component';
 import { IngredientViewComponent } from './views/ingredients/ingredient-view/ingredient-view.component';
 import { ShopListViewComponent } from './views/shoppinglist/shop-list-view/shop-list-view.component';
-import { CreateMealViewComponent } from './week/create-meal-view/create-meal-view.component';
+import { CreateMealViewComponent } from './views/week/create-meal-view/create-meal-view.component';
+import { WeekViewComponent } from './views/week/week-view/week-view.component';
 
 export const routes: Routes = [
     {
@@ -33,11 +33,13 @@ export const routes: Routes = [
                         children: [
                             {
                                 path: 'lunch',
-                                component: CreateMealViewComponent
+                                component: CreateMealViewComponent,
+                                data: { mealType: 'lunch' }
                             },
                             {
                                 path: 'dinner',
-                                component: CreateMealViewComponent
+                                component: CreateMealViewComponent,
+                                data: { mealType: 'dinner' }
                             }
                         ]
                     }

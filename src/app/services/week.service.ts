@@ -45,12 +45,13 @@ export class WeekService {
                     return of([]);
                   }
                   for (let day of week.days) {
-                    for (let dish of day.lunch) {
-                      ids.push(...dish.ingredients.map(ing => ing.id));
-                    }
-                    for (let dish of day.dinner) {
-                      ids.push(...dish.ingredients.map(ing => ing.id));
-                    }
+                    const lunch = day.lunch;
+                    ids.push(...lunch.ingredients.map(ing => ing.id));
+                    ids.push(...lunch.mainDish.ingredients.map(ing => ing.id));
+
+                    const dinner = day.dinner;
+                    ids.push(...dinner.ingredients.map(ing => ing.id));
+                    ids.push(...dinner.mainDish.ingredients.map(ing => ing.id));
                   }
                   const uniq = _.chain(ids).compact().uniq().value();
                   console.log("Ingredients uniques", uniq);
