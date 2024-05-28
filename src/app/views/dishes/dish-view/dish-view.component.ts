@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { Dish, Meal } from '../../model/meal.model';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AutocompleteComponent } from '../../gui/autocomplete/autocomplete.component';
-import { Ingredient } from '../../model/ingredient.model';
-import { DatabaseService } from '../../services/database.service';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { first } from 'rxjs';
+import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.component';
+import { Ingredient } from '../../../model/ingredient.model';
+import { Dish } from '../../../model/meal.model';
+import { DatabaseService } from '../../../services/database.service';
 
 @Component({
   selector: 'dish-view',

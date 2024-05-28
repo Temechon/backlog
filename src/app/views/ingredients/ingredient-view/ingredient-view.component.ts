@@ -1,11 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { first } from 'rxjs';
-import { Ingredient } from '../../model/ingredient.model';
-import { DatabaseService } from '../../services/database.service';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { AutocompleteComponent } from '../../gui/autocomplete/autocomplete.component';
+import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.component';
+import { Ingredient } from '../../../model/ingredient.model';
+import { DatabaseService } from '../../../services/database.service';
 
 @Component({
   selector: 'app-ingredient-view',
@@ -46,7 +46,7 @@ export class IngredientViewComponent {
       next: () => {
         this.successMessage = "L'ingrédient a bien été ajouté !";
         setTimeout(() => {
-          this.router.navigate(['/meals']);
+          this.router.navigate(['/dishes']);
         }, 1000);
       },
       error: (err) => console.error('Error saving meal:', err)

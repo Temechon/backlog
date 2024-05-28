@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import * as _ from 'underscore';
-import { Ingredient } from '../../model/ingredient.model';
-import { WeekService } from '../../services/week.service';
-import { CommonModule } from '@angular/common';
-import { CapitalizeSpacesPipe } from '../../capitalizeSpaces.pipe';
+import { CapitalizeSpacesPipe } from '../../../capitalizeSpaces.pipe';
+import { Ingredient } from '../../../model/ingredient.model';
+import { WeekService } from '../../../services/week.service';
 
 @Component({
   selector: 'app-shop-list-view',

@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { DishListViewComponent } from './views/dish-list-view/dish-list-view.component';
-import { DishViewComponent } from './views/dish-view/dish-view.component';
-import { IngredientViewComponent } from './views/ingredient-view/ingredient-view.component';
-import { MenuListComponent } from './views/menulist/menu-list/menu-list.component';
+import { MenuListComponent } from './views/home/menu-list/menu-list.component';
 import { WeekViewComponent } from './views/menulist/week-view/week-view.component';
-import { ShopListViewComponent } from './views/shop-list-view/shop-list-view.component';
+import { DishListViewComponent } from './views/dishes/dish-list-view/dish-list-view.component';
+import { DishViewComponent } from './views/dishes/dish-view/dish-view.component';
+import { IngredientViewComponent } from './views/ingredients/ingredient-view/ingredient-view.component';
+import { ShopListViewComponent } from './views/shoppinglist/shop-list-view/shop-list-view.component';
+import { CreateMealViewComponent } from './week/create-meal-view/create-meal-view.component';
 
 export const routes: Routes = [
     {
@@ -32,13 +33,11 @@ export const routes: Routes = [
                         children: [
                             {
                                 path: 'lunch',
-                                component: DishListViewComponent,
-                                data: { mode: 'select', mealType: 'lunch' }
+                                component: CreateMealViewComponent
                             },
                             {
                                 path: 'dinner',
-                                component: DishListViewComponent,
-                                data: { mode: 'select', mealType: 'dinner' }
+                                component: CreateMealViewComponent
                             }
                         ]
                     }
@@ -47,26 +46,7 @@ export const routes: Routes = [
         ]
     },
     {
-        path: "meals",
-        children: [
-            {
-                path: "",
-                component: DishListViewComponent
-            },
-            {
-                path: ":id",
-                children: [
-                    {
-                        path: "",
-                        component: DishViewComponent
-                    }
-                ]
-            }
-        ]
-    },
-
-    {
-        path: "dish",
+        path: "dishes",
         children: [
             {
                 path: "",

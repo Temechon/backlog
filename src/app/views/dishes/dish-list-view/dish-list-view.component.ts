@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { DatabaseService } from '../../services/database.service';
-import { Dish, Meal } from '../../model/meal.model';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable, combineLatest, first, map } from 'rxjs';
-import { WeekService } from '../../services/week.service';
-import { Ingredient } from '../../model/ingredient.model';
+import { Ingredient } from '../../../model/ingredient.model';
+import { Dish } from '../../../model/meal.model';
+import { DatabaseService } from '../../../services/database.service';
+import { WeekService } from '../../../services/week.service';
 
 
 interface DishListData {
