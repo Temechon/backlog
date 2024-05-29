@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, collection, collectionData, deleteDoc, doc, docData, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
-import { Observable, catchError, combineLatest, first, forkJoin, from, lastValueFrom, map, of, switchMap, tap } from 'rxjs';
-import { AuthentificationService } from './authentification.service';
+import { Firestore, collection, collectionData, deleteDoc, doc, docData, setDoc } from '@angular/fire/firestore';
+import { Observable, combineLatest, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
+import * as _ from 'underscore';
 import { Ingredient } from '../model/ingredient.model';
-import { Dish, Meal } from '../model/meal.model';
+import { Dish } from '../model/meal.model';
 
+import { AuthentificationService } from './authentification.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -23,9 +24,14 @@ export class DatabaseService {
       switchMap(userId => {
         if (userId) {
           const dishesCollec = collection(this.firestore, `users/${userId}/dishes`);
-          return collectionData(dishesCollec, { idField: 'id' }).pipe(
-            tap(data => console.log("dishes from database", data))).pipe(
-              map(dish => dish.map(d => new Dish(d)))
+          return collectionData(dishesCollec, { idField: 'id' })
+            .pipe(
+              tap(
+                data => console.log("dishes from database", data)
+              ),
+              map(
+                dish => dish.map(d => new Dish(d))
+              )
             );
         } else {
           return of([]); // Handle the case where the user is not authenticated
@@ -184,21 +190,31 @@ export class DatabaseService {
     );
   }
 
-  public removeIngredientFromDishes(userId: string, ingredientId: string): Observable<void> {
+  /**
+   * Removes the given ingredients from all dishes
+   */
+  private removeIngredientFromDishes(userId: string, ingredientId: string): Observable<void> {
     const dishesCollectionRef = collection(this.firestore, `users/${userId}/dishes`);
 
     return collectionData(dishesCollectionRef).pipe(
-      switchMap(dishesSnapshot => {
-        const updateDishesObservables = dishesSnapshot.map(dishDoc => {
-          const dish = new Dish(dishDoc);
-          dish.ingredients = dish.ingredients.filter((ing: Ingredient) => ing.id !== ingredientId);
+      map(
+        dishesSnapshot => {
+          const updateDishesObservables = dishesSnapshot.map(dishDoc => {
+            const dish = new Dish(dishDoc);
+            // console.log("Remove ingredient from Dishes -> Dish", dish);
 
-          const dishDocRef = doc(this.firestore, `users/${userId}/dishes/${dish.id}`);
-          return from(setDoc(dishDocRef, dish.toJson()));
-        });
+            const isPresent = _.findIndex(dish.ingredients, ing => ing.id === ingredientId);
+            if (isPresent >= 0) {
+              // console.log("Ingredient found in dish", dish.name);
+              dish.ingredients = dish.ingredients.filter((ing: Ingredient) => ing.id !== ingredientId);
+              const dishDocRef = doc(this.firestore, `users/${userId}/dishes/${dish.id}`);
+              return from(setDoc(dishDocRef, dish.toJson()));
+            }
+            return of('');
+          });
 
-        return forkJoin(updateDishesObservables);
-      }),
+          return forkJoin(updateDishesObservables);
+        }),
       map(() => void 0)
     );
   }

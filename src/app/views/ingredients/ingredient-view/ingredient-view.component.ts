@@ -18,6 +18,7 @@ export class IngredientViewComponent {
 
   ingredient: Ingredient;
   successMessage: string;
+  dishid: string = null;
 
   constructor(private db: DatabaseService, private router: Router, private route: ActivatedRoute) {
 
@@ -38,6 +39,8 @@ export class IngredientViewComponent {
         );
       }
     });
+
+    this.dishid = this.route.snapshot.queryParamMap.get('dishid');
   }
 
 
@@ -46,7 +49,11 @@ export class IngredientViewComponent {
       next: () => {
         this.successMessage = "L'ingrédient a bien été ajouté !";
         setTimeout(() => {
-          this.router.navigate(['/dishes']);
+          if (this.dishid) {
+            this.router.navigate(['/dishes', this.dishid]);
+          } else {
+            this.router.navigate(['/dishes']);
+          }
         }, 1000);
       },
       error: (err) => console.error('Error saving meal:', err)

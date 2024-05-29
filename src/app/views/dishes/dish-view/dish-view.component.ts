@@ -58,7 +58,7 @@ export class DishViewComponent {
 
     this.db.saveIngredient(ing).pipe(first()).subscribe({
       next: () => {
-        return this.router.navigate(['/ingredient', ing.id]);
+        return this.router.navigate(['/ingredient', ing.id], { queryParams: { dishid: this.dish.id } });
       },
       error: (err) => console.error("Error saving ingredient", err)
     })
@@ -69,7 +69,7 @@ export class DishViewComponent {
       next: () => {
         this.successMessage = 'Le repas a bien été ajouté !', this.dish;
         setTimeout(() => {
-          this.router.navigate(['/meals']);
+          this.router.navigate(['/dishes']);
         }, 1000);
       },
       error: (err) => console.error('Error saving meal:', err)
