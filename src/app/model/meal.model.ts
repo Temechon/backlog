@@ -48,7 +48,7 @@ export class Meal {
             return name;
         }
         // returns the ingredients list in order, separated by spaces
-        name += this.ingredients.map(ing => ing.name).join(", ");
+        name += " avec " + this.ingredients.map(ing => ing.name).join(", ");
 
         return name;
     }

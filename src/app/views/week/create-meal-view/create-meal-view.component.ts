@@ -10,11 +10,12 @@ import { Day } from '../../../model/day.model';
 import { WeekService } from '../../../services/week.service';
 import { CommonModule } from '@angular/common';
 import { Week } from '../../../model/week.model';
+import { DishListComponent } from '../../../gui/dish-list/dish-list.component';
 
 @Component({
   selector: 'app-create-meal-view',
   standalone: true,
-  imports: [AutocompleteComponent, CommonModule],
+  imports: [AutocompleteComponent, CommonModule, DishListComponent],
   templateUrl: './create-meal-view.component.html',
   styleUrl: './create-meal-view.component.scss'
 })
@@ -91,10 +92,17 @@ export class CreateMealViewComponent {
     if (event instanceof Dish) {
       this.meal.mainDish = event;
     } else {
-      this.meal.ingredients.push(event);
+      const isNotThereALready = _.findIndex(this.meal.ingredients, i => i.id === event.id)
+      if (isNotThereALready === -1) {
+        this.meal.ingredients.push(event);
+      }
     }
     console.log("week json", this.week.toJson());
+    this.weekService.saveWeek(this.week).pipe(first()).subscribe()
+  }
 
+  removeFromMeal(ing: Ingredient) {
+    this.meal.ingredients = this.meal.ingredients.filter(i => i.id !== ing.id);
     this.weekService.saveWeek(this.week).pipe(first()).subscribe()
   }
 

@@ -9,7 +9,7 @@
             {{ item.name }}
         </li>
         }
-        @if (showAddOption) {
+        @if (showAddOption && canDisplayAddOption) {
         <li class="p-2 hover:bg-gray-200 cursor-pointer italic text-sm" (click)="addNewItem()">
             Ajouter un ingrédient...
         </li>

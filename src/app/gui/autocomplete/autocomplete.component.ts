@@ -13,6 +13,7 @@ export class AutocompleteComponent<T extends { name: string }> implements OnChan
 
   @Input() items: T[] = [];
   @Input() placeholder: string = ""
+  @Input() canDisplayAddOption = true;
 
   @Output() selectItem = new EventEmitter<T>();
   @Output() newItem = new EventEmitter<string>();

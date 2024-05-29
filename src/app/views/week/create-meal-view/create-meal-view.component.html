@@ -1,15 +1,6 @@
-<h1 class="font-semibold text-2xl mb-12">
-    Créer un menu
-</h1>
-
-<autocomplete [items]="allDishesAndIngredients" (selectItem)="addToMeal($event)" placeholder="Chercher...">
-</autocomplete>
-
-<hr class="my-8">
-
 @if (day$ |async; as day) {
-<h1 class="font-semibold text-2xl my-12">
-    Menu de {{day.id}}
+<h1 class="font-semibold text-2xl mb-12">
+    Créer un menu pour {{day.id}}
     @if (mealType$ |async; as mealType) {
     @if (mealType === 'lunch') {
     midi
@@ -22,10 +13,38 @@
 
 <div>
     @if (meal$ |async; as currentMeal) {
-    {{currentMeal.name}}
+    @if (currentMeal.mainDish.name) {
+    <div class="text-lg">
+        <span class=" font-semibold">Plat principal :</span> {{currentMeal.mainDish.name}}
+    </div>
+    }
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-semibold mb-2">
+            Servi avec :
+        </label>
+        <ul class="list-disc pl-5">
+            @for (ing of meal.ingredients; track $index) {
+            <li class="flex items-center justify-between mb-2 px-2 border-b py-1">
+                <span>{{ing.name}}</span>
+                <button (click)="removeFromMeal(ing)"
+                    class="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </li>
+            }
+        </ul>
+    </div>
     }
 </div>
 
-<hr class="my-8">
-
 }
+
+<!-- <autocomplete [items]="allDishesAndIngredients" (selectItem)="addToMeal($event)" placeholder="Chercher..."
+    [canDisplayAddOption]="false">
+</autocomplete> -->
+
+<h1 class="font-semibold text-2xl my-8">
+    Plats disponibles
+</h1>
+
+<dish-list [canDelete]="false" (selectItem)="addToMeal($event)"></dish-list>

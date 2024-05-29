@@ -6,6 +6,7 @@ import { Ingredient } from '../../../model/ingredient.model';
 import { Dish } from '../../../model/meal.model';
 import { DatabaseService } from '../../../services/database.service';
 import { WeekService } from '../../../services/week.service';
+import { DishListComponent } from '../../../gui/dish-list/dish-list.component';
 
 
 interface DishListData {
@@ -17,7 +18,7 @@ interface DishListData {
 @Component({
   selector: 'app-meals-view',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, DishListComponent],
   templateUrl: './dish-list-view.component.html'
 })
 
