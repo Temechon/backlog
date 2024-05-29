@@ -5,6 +5,8 @@
 <autocomplete [items]="allDishesAndIngredients" (selectItem)="addToMeal($event)" placeholder="Chercher...">
 </autocomplete>
 
+<hr class="my-8">
+
 @if (day$ |async; as day) {
 <h1 class="font-semibold text-2xl my-12">
     Menu de {{day.id}}
@@ -20,8 +22,10 @@
 
 <div>
     @if (meal$ |async; as currentMeal) {
-    {{currentMeal.mainDish?.name}}
+    {{currentMeal.name}}
     }
 </div>
+
+<hr class="my-8">
 
 }

@@ -10,7 +10,7 @@ export class Dish {
     constructor(data: any = {}) {
         this.id = data.id || guid();
         this.name = data.name ?? "";
-        this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
+        this.ingredients = (data.ingredients || []).map((ingData: any) => new Ingredient(ingData));
     }
 
     getIngredients(): string {
@@ -21,7 +21,7 @@ export class Dish {
         return {
             id: this.id,
             name: this.name,
-            ingredients: this.ingredients.map(ing => ing.id)
+            ingredients: this.ingredients.map(ing => ing.toJson())
         };
     }
 
@@ -34,8 +34,8 @@ export class Meal {
 
     constructor(data: any = {}) {
         this.id = data.id || guid();
-        this.ingredients = (data.ingredients || []).map((ingredientWithOnlyId: string) => new Ingredient({ id: ingredientWithOnlyId }));
-        this.mainDish = new Dish(data.dish);
+        this.ingredients = (data.ingredients || []).map((ingData: any) => new Ingredient(ingData));
+        this.mainDish = new Dish(data.mainDish);
     }
 
     get name(): string {
@@ -56,7 +56,7 @@ export class Meal {
     toJson() {
         return {
             id: this.id,
-            ingredients: this.ingredients.map(ingredient => ingredient.id),
+            ingredients: this.ingredients.map(ingredient => ingredient.toJson()),
             mainDish: this.mainDish.toJson()
         };
     }
