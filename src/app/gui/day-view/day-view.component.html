@@ -1,5 +1,5 @@
 <div class="flex flex-col space-y-4 mb-4" (click)="onBlur()">
-    <div class="border-2" [ngClass]="{'border-red-500': currentday}">
+    <div class="border-2" [ngClass]="{'border-indigo-500': currentday}">
         <div class="px-4 py-2 flex justify-between items-center bg-indigo-100 font-semibold">
             {{day.id}}
             @if (editMode) {
@@ -13,9 +13,9 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='lunch'}">
-            @if (day.lunch) {
+            @if (! day.lunch.isEmpty()) {
             <div (click)="editMeal($event, 'lunch')">
-                {{day.lunch.mainDish.name}}
+                {{day.lunch.name}}
             </div>
             } @else {
             <div (click)="addMealToDay(day, 'lunch')">Clique ici pour ajouter un repas !</div>
@@ -23,9 +23,9 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='dinner'}">
-            @if (day.dinner) {
+            @if (! day.dinner.isEmpty()) {
             <div (click)="editMeal($event, 'dinner')">
-                {{day.dinner.mainDish.name}}
+                {{day.dinner.name}}
             </div>
             } @else {
             <div (click)="addMealToDay(day, 'dinner')">Clique ici pour ajouter un repas !</div>

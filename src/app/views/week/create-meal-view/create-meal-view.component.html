@@ -13,7 +13,7 @@
 
 <div>
     @if (meal$ |async; as currentMeal) {
-    @if (currentMeal.mainDish.name) {
+    @if (currentMeal.mainDish?.name) {
     <div class="text-lg">
         <span class=" font-semibold">Plat principal :</span> {{currentMeal.mainDish.name}}
     </div>

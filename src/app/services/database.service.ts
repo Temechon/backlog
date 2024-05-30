@@ -3,9 +3,11 @@ import { Firestore, collection, collectionData, deleteDoc, doc, docData, setDoc 
 import { Observable, combineLatest, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
 import * as _ from 'underscore';
 import { Ingredient } from '../model/ingredient.model';
-import { Dish } from '../model/meal.model';
+import { Dish, Meal } from '../model/meal.model';
 
 import { AuthentificationService } from './authentification.service';
+import { Day } from '../model/day.model';
+import { Week } from '../model/week.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -84,42 +86,6 @@ export class DatabaseService {
   }
 
 
-  /**
-   * Returns all meal available for the connected user. ALl meal contains all ingredients (with all data)
-   */
-  // getAllPlatsWithAllIngredients(): Observable<Meal[]> {
-  //   return this.authService.getUserId().pipe(
-  //     switchMap(userId => {
-  //       if (userId) {
-  //         return this.getMeals(userId).pipe(
-  //           switchMap(plats => {
-  //             const allIngredientIds = [...new Set(plats.flatMap(plat => plat.ingredients || []).map(ing => ing.id))];
-  //             return this.getIngredients(allIngredientIds, userId).pipe(
-  //               map(ingredients => {
-  //                 return plats.map(plat => {
-  //                   if (plat.ingredients.length === 0) {
-  //                     return plat;
-  //                   }
-  //                   // Find ingredients and filter out undefined values
-  //                   const platIngredients = plat.ingredients
-  //                     .map(id => ingredients.find(ing => ing.id === id.id))
-  //                     .filter(Boolean) as Ingredient[]; // Filter out undefined values
-
-  //                   // Update plat with filtered ingredients
-  //                   plat.ingredients = platIngredients;
-  //                   return plat;
-  //                 });
-  //               })
-  //             );
-  //           })
-  //         );
-  //       } else {
-  //         throw new Error("User not connected");
-  //       }
-  //     })
-  //   );
-  // }
-
 
   /**
    * Returns all ingredient for the connected user
@@ -165,7 +131,7 @@ export class DatabaseService {
         if (userId) {
           const mealDocRef = doc(this.firestore, `users/${userId}/dishes/${dish.id}`);
           return from(deleteDoc(mealDocRef)).pipe(
-            map(() => void 0)
+            switchMap(() => this.removeDishFromWeeks(userId, dish.id))
           );
         } else {
           throw new Error('User is not authenticated');
@@ -181,7 +147,8 @@ export class DatabaseService {
         if (userId) {
           const mealDocRef = doc(this.firestore, `users/${userId}/ingredients/${ing.id}`);
           return from(deleteDoc(mealDocRef)).pipe(
-            switchMap(() => this.removeIngredientFromDishes(userId, ing.id))
+            switchMap(() => this.removeIngredientFromDishes(userId, ing.id)),
+            switchMap(() => this.removeIngredientFromWeeks(userId, ing.id))
           );
         } else {
           throw new Error('User is not authenticated');
@@ -193,7 +160,7 @@ export class DatabaseService {
   /**
    * Removes the given ingredients from all dishes
    */
-  private removeIngredientFromDishes(userId: string, ingredientId: string): Observable<void> {
+  private removeIngredientFromDishes(userId: string, ingredientId: string): Observable<any> {
     const dishesCollectionRef = collection(this.firestore, `users/${userId}/dishes`);
 
     return collectionData(dishesCollectionRef).pipe(
@@ -214,10 +181,64 @@ export class DatabaseService {
           });
 
           return forkJoin(updateDishesObservables);
-        }),
-      map(() => void 0)
+        }
+      )
     );
   }
+
+  /**
+   * Removes the given dish from all meals of all past weeks
+   */
+  private removeDishFromWeeks(userId: string, dishid: string): Observable<any> {
+    const weeksCollection = collection(this.firestore, `users/${userId}/weeks`);
+
+    return collectionData(weeksCollection).pipe(
+      map(
+        weekArray => {
+          const updateWeeks = weekArray.map(weekObj => {
+            const week = new Week(weekObj);
+            week.days.map(day => {
+              if (day.lunch.mainDish?.id === dishid) {
+                day.lunch.mainDish = null;
+              } if (day.dinner.mainDish?.id === dishid) {
+                day.dinner.mainDish = null;
+              }
+            })
+
+            const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${week.id}`);
+            return from(setDoc(weekDocRef, week.toJson()));
+          })
+          return forkJoin(updateWeeks);
+        }
+      )
+    )
+  }
+
+  /**
+   * Removes the given ingredient from all meals of all past weeks
+   */
+  private removeIngredientFromWeeks(userId: string, ingid: string): Observable<any> {
+    const weeksCollection = collection(this.firestore, `users/${userId}/weeks`);
+
+    return collectionData(weeksCollection).pipe(
+      map(
+        weekArray => {
+          const updateWeeks = weekArray.map(weekObj => {
+            const week = new Week(weekObj);
+            week.days.map(day => {
+              day.lunch.ingredients = day.lunch.ingredients.filter(i => i.id !== ingid);
+              day.dinner.ingredients = day.dinner.ingredients.filter(i => i.id !== ingid);
+            })
+
+            const weekDocRef = doc(this.firestore, `users/${userId}/weeks/${week.id}`);
+            return from(setDoc(weekDocRef, week.toJson()));
+          })
+          return forkJoin(updateWeeks);
+        }
+      )
+    )
+  }
+
 
 
   public saveIngredient(ing: Ingredient): Observable<void> {

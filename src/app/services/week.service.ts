@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, doc, getDoc, onSnapshot, setDoc, updateDoc } from '@angular/fire/firestore';
-import { Observable, catchError, combineLatest, from, map, of, switchMap } from 'rxjs';
+import { Observable, catchError, combineLatest, from, map, mergeMap, of, switchMap } from 'rxjs';
 import { Week } from '../model/week.model';
 import { AuthentificationService } from './authentification.service';
 import { DatabaseService } from './database.service';
@@ -38,24 +38,27 @@ export class WeekService {
           return this.getCurrentWeekId().pipe(
             switchMap(weekid => {
               return this.getWeekById(weekid).pipe(
-                switchMap(week => {
+                mergeMap(week => {
                   // Build ingredients of all meals
-                  const ids = [];
-                  if (week.days.length === 0) {
-                    return of([]);
-                  }
+                  const ingds = [];
+
                   for (let day of week.days) {
                     const lunch = day.lunch;
-                    ids.push(...lunch.ingredients.map(ing => ing.id));
-                    ids.push(...lunch.mainDish.ingredients.map(ing => ing.id));
+                    ingds.push(...lunch.ingredients);
+                    if (lunch.mainDish) {
+                      ingds.push(...lunch.mainDish.ingredients);
+                    }
+
 
                     const dinner = day.dinner;
-                    ids.push(...dinner.ingredients.map(ing => ing.id));
-                    ids.push(...dinner.mainDish.ingredients.map(ing => ing.id));
+                    ingds.push(...dinner.ingredients);
+                    if (dinner.mainDish) {
+                      ingds.push(...dinner.mainDish.ingredients);
+                    }
                   }
-                  const uniq = _.chain(ids).compact().uniq().value();
+                  const uniq = _.chain(ingds).compact().uniq("id").value();
                   console.log("Ingredients uniques", uniq);
-                  return this.db.getIngredients(uniq, userId);
+                  return of(uniq);
 
                 })
               )

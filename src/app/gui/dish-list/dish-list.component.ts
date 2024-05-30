@@ -30,6 +30,7 @@ export class DishListComponent {
 
   @Input() canDelete: boolean = true;
   @Output() selectItem = new EventEmitter<any>();
+  @Output() deleteItem = new EventEmitter<any>();
 
   constructor(
     private db: DatabaseService,
@@ -58,14 +59,13 @@ export class DishListComponent {
 
   }
 
-  onItemSelect(dish: Dish | Ingredient) {
+  onItemSelect(dish: Dish | Ingredient, event: Event) {
+    event.stopPropagation();
     this.selectItem.emit(dish);
   }
 
-  deleteDish(dish: Dish, event: Event) {
-
-  }
-  deleteIngredient(ing: Ingredient, event: Event) {
-
+  onDeleteItem(dish: Dish | Ingredient, event: Event) {
+    event.stopPropagation();
+    this.deleteItem.emit(dish);
   }
 }

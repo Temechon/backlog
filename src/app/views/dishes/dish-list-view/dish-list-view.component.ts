@@ -75,13 +75,19 @@ export class DishListViewComponent {
     return this.router.navigate(['/dishes', dish.id]);
   }
 
-  deleteDish(dish: Dish, $event) {
-    $event.stopPropagation();
+  onDelete(item: Dish | Ingredient) {
+    if (item instanceof Dish) {
+      this.deleteDish(item);
+    } else {
+      this.deleteIngredient(item);
+    }
+  }
+
+  deleteDish(dish: Dish) {
     this.db.deleteDish(dish).pipe(first()).subscribe(() => console.log("Repas effacé"));
 
   }
-  deleteIngredient(ing: Ingredient, $event) {
-    $event.stopPropagation();
+  deleteIngredient(ing: Ingredient) {
     this.db.deleteIngredient(ing).pipe(first()).subscribe(() => console.log("Ingredient effacé"));
 
   }
