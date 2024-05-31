@@ -6,12 +6,14 @@ export class Ingredient {
     isMeat: boolean; // Indique si l'ingrédient est de la viande
     isSideDish: boolean; // Indique si l'ingrédient peut être utilisé comme accompagnement
     shopCategory: string;
+    isDessert: boolean;
 
     constructor(data: any = {}) {
         this.id = data.id || guid();
         this.name = data.name ?? "";
         this.isMeat = data.isMeat ?? false;
         this.isSideDish = data.isSideDish ?? false;
+        this.isDessert = data.isDessert ?? false;
         this.shopCategory = data.shopCategory || 'Divers'
     }
 
