@@ -26,7 +26,7 @@ export class Dish {
     }
 
     get isVegetarian(): boolean {
-        return this.ingredients.filter(ing => ing.isMeat).length > 0;
+        return this.ingredients.filter(ing => ing.isMeat).length === 0;
     }
 
 }

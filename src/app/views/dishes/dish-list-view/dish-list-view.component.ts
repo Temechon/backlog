@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Observable, combineLatest, first, map } from 'rxjs';
+import { DishListComponent } from '../../../gui/dish-list/dish-list.component';
 import { Ingredient } from '../../../model/ingredient.model';
 import { Dish } from '../../../model/meal.model';
 import { DatabaseService } from '../../../services/database.service';
-import { WeekService } from '../../../services/week.service';
-import { DishListComponent } from '../../../gui/dish-list/dish-list.component';
 
 
 interface DishListData {
@@ -24,42 +23,14 @@ interface DishListData {
 
 export class DishListViewComponent {
 
-  filteredDishes: Observable<Dish[]>;
-  filteredIngredients: Observable<Ingredient[]>;
-
-  data$: Observable<DishListData>;
-
   constructor(
     private db: DatabaseService,
-    private weekservice: WeekService,
     private router: Router,
-    private route: ActivatedRoute
   ) {
 
   }
 
-  toggleCategory(categ: string, event: any) {
-    // todo
-  }
-
   ngOnInit() {
-    // Retrieve all meals from database
-    // this.db.getAllPlatsWithAllIngredients().pipe(first()).subscribe(data => {
-    //   this.filteredMeals = data;
-    // })
-
-    // get all dishes and all ingredients
-    this.filteredDishes = this.db.getAllDishes();
-    this.filteredIngredients = this.db.getAllIngredients();
-
-    this.data$ = combineLatest([this.filteredDishes, this.filteredIngredients])
-      .pipe(map(([dishes, ingredients]) => {
-        return {
-          dishes,
-          ingredients
-        }
-      }))
-
   }
 
   addIngredient() {
@@ -67,12 +38,16 @@ export class DishListViewComponent {
   }
 
   newDish() {
-    // if (this.editMode) {
     const dish = new Dish();
     this.db.saveDish(dish).pipe(first()).subscribe(() => this.openDish(dish))
   }
-  openDish(dish: Dish) {
-    return this.router.navigate(['/dishes', dish.id]);
+
+  openDish(item: Dish | Ingredient) {
+    if (item instanceof Dish) {
+      return this.router.navigate(['/dishes', item.id]);
+    } else {
+      return this.router.navigate(['/ingredient', item.id]);
+    }
   }
 
   onDelete(item: Dish | Ingredient) {

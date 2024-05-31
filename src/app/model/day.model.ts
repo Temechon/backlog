@@ -29,8 +29,8 @@ export class Day {
     toJson() {
         const obj = {
             id: this.id,
-            lunch: this.lunch.toJson(),
-            dinner: this.dinner.toJson()
+            lunch: this.lunch?.toJson() ?? null,
+            dinner: this.dinner?.toJson() ?? null
         };
         return Object.fromEntries(
             Object.entries(obj).filter(([_, value]) => value !== null && value !== undefined)

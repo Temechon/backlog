@@ -13,7 +13,7 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='lunch'}">
-            @if (! day.lunch.isEmpty()) {
+            @if (day.lunch && ! day.lunch.isEmpty()) {
             <div (click)="editMeal($event, 'lunch')">
                 {{day.lunch.name}}
             </div>
@@ -23,7 +23,7 @@
         </div>
         <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
             [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='dinner'}">
-            @if (! day.dinner.isEmpty()) {
+            @if (day.dinner && ! day.dinner.isEmpty()) {
             <div (click)="editMeal($event, 'dinner')">
                 {{day.dinner.name}}
             </div>

@@ -46,7 +46,7 @@ export class DayViewComponent {
       week.replace(day);
 
       console.log("avant supp", week);
-      this.weekService.saveWeek(week).pipe(first()).subscribe(void 0)
+      this.weekService.saveWeek(week).pipe(first()).subscribe()
       this.editMode = "";
     })
 
