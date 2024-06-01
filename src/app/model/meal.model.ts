@@ -1,5 +1,6 @@
 import { guid } from "../app.component";
 import { Ingredient } from "./ingredient.model";
+import * as _ from 'underscore';
 
 
 export class Dish {
@@ -27,6 +28,14 @@ export class Dish {
 
     get isVegetarian(): boolean {
         return this.ingredients.filter(ing => ing.isMeat).length === 0;
+    }
+
+    updateIngredient(ing: Ingredient) {
+        // ingredients
+        const index = _.findIndex(this.ingredients, i => i.id === ing.id);
+        if (index >= 0) {
+            this.ingredients[index] = ing;
+        }
     }
 
 }
@@ -88,5 +97,16 @@ export class Meal {
             return false;
         }
         return true;
+    }
+    updateIngredient(ing: Ingredient) {
+        // ingredients
+        const index = _.findIndex(this.ingredients, i => i.id === ing.id);
+        if (index >= 0) {
+            this.ingredients[index] = ing;
+        }
+        // dish
+        if (this.mainDish) {
+            this.mainDish.updateIngredient(ing);
+        }
     }
 }

@@ -1,6 +1,8 @@
 import { guid } from "../app.component";
 import { Day, SystemDay } from "./day.model";
 import * as _ from 'underscore';
+import { Ingredient } from "./ingredient.model";
+import { Meal } from "./meal.model";
 
 const days = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 
@@ -54,5 +56,16 @@ export class Week {
     replace(day: Day) {
         const index = _.findIndex(this.days, (d: Day) => d.id === day.id);
         this.days[index] = day;
+    }
+
+    updateIngredient(ing: Ingredient) {
+        for (let day of this.days) {
+            if (day.lunch) {
+                day.lunch.updateIngredient(ing);
+            }
+            if (day.dinner) {
+                day.dinner.updateIngredient(ing);
+            }
+        }
     }
 }

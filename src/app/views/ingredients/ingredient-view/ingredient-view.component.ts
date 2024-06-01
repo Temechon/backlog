@@ -45,16 +45,14 @@ export class IngredientViewComponent {
 
 
   save() {
-    this.db.saveIngredient(this.ingredient).subscribe({
+    this.db.saveIngredient(this.ingredient).pipe(first()).subscribe({
       next: () => {
         this.successMessage = "L'ingrédient a bien été ajouté !";
-        setTimeout(() => {
-          if (this.dishid) {
-            this.router.navigate(['/dishes', this.dishid]);
-          } else {
-            this.router.navigate(['/dishes']);
-          }
-        }, 1000);
+        if (this.dishid) {
+          this.router.navigate(['/dishes', this.dishid]);
+        } else {
+          this.router.navigate(['/dishes']);
+        }
       },
       error: (err) => console.error('Error saving meal:', err)
     });

@@ -16,13 +16,17 @@ export class SystemDay {
 
 export class Day {
     id: string;
-    lunch: Meal; // Repas de midi
-    dinner: Meal; // Repas du soir
+    lunch: Meal = null; // Repas de midi
+    dinner: Meal = null; // Repas du soir
 
     constructor(data?: any) {
         this.id = data.id;
-        this.lunch = new Meal(data.lunch);
-        this.dinner = new Meal(data.dinner);
+        if (data.lunch) {
+            this.lunch = new Meal(data.lunch);
+        }
+        if (data.dinner) {
+            this.dinner = new Meal(data.dinner);
+        }
 
     }
 
@@ -35,14 +39,6 @@ export class Day {
         return Object.fromEntries(
             Object.entries(obj).filter(([_, value]) => value !== null && value !== undefined)
         );
-    }
-
-    removeMeal(meal: string) {
-        if (meal === 'lunch') {
-            this.lunch = null;
-        } if (meal === 'dinner') {
-            this.dinner = null;
-        }
     }
 }
 
