@@ -1,35 +1,39 @@
-<div class="flex flex-col space-y-4 mb-4" (click)="onBlur()">
-    <div class="border-2" [ngClass]="{'border-indigo-500': currentday}">
-        <div class="px-4 py-2 flex justify-between items-center bg-indigo-100 font-semibold">
-            {{day.id}}
-            @if (editMode) {
-            <div>
-                <button class="bg-blue-500 text-white p-1 rounded mx-2 text-xs w-6 h-6"
-                    (click)="addMealToDay(day, editMode)"><i class="fas fa-edit"></i></button>
-                <button class="bg-red-500 text-white p-1 rounded mx-2 text-xs w-6 h-6"
-                    (click)="deleteMeal($event, day)"><i class="fas fa-trash"></i></button>
-            </div>
-            }
+<div class="mb-4 border rounded-lg shadow-sm" (click)="onBlur()">
+    <div class="bg-indigo-50 rounded-t-lg p-2 text-indigo-400 cursor-pointer flex items-center justify-between"
+        [ngClass]="{'bg-indigo-300 text-white': currentday}" (click)="toggleAccordion()">
+        <span class="font-semibold text-lg">{{day.id |capitalizeSpaces}}</span>
+        @if (editMode) {
+        <div>
+            <button class="bg-blue-500 text-white p-1 rounded mx-2 text-xs w-6 h-6"
+                (click)="addMealToDay(day, editMode)"><i class="fas fa-edit"></i></button>
+            <button class="bg-red-500 text-white p-1 rounded mx-2 text-xs w-6 h-6" (click)="deleteMeal($event, day)"><i
+                    class="fas fa-trash"></i></button>
         </div>
-        <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
-            [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='lunch'}">
-            @if (day.lunch && ! day.lunch.isEmpty()) {
-            <div (click)="editMeal($event, 'lunch')">
-                {{day.lunch.name}}
-            </div>
-            } @else {
-            <div (click)="addMealToDay(day, 'lunch')">Clique ici pour ajouter un repas !</div>
-            }
-        </div>
-        <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
-            [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='dinner'}">
-            @if (day.dinner && ! day.dinner.isEmpty()) {
-            <div (click)="editMeal($event, 'dinner')">
-                {{day.dinner.name}}
-            </div>
-            } @else {
-            <div (click)="addMealToDay(day, 'dinner')">Clique ici pour ajouter un repas !</div>
-            }
-        </div>
+        } @else {
+        <i class="transition-transform duration-300"
+            [ngClass]="accordion ? 'fas fa-chevron-down' : 'fas fa-chevron-down rotate-180'"></i>
+        }
     </div>
+    @if (accordion) {
+    <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
+        [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='lunch'}">
+        @if (day.lunch && ! day.lunch.isEmpty()) {
+        <div (click)="editMeal($event, 'lunch')">
+            {{day.lunch.name}}
+        </div>
+        } @else {
+        <div (click)="addMealToDay(day, 'lunch')">Clique ici pour ajouter un repas !</div>
+        }
+    </div>
+    <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
+        [ngClass]="{'bg-red-500 hover:bg-red-200 hover:text-red-700 text-white':editMode==='dinner'}">
+        @if (day.dinner && ! day.dinner.isEmpty()) {
+        <div (click)="editMeal($event, 'dinner')">
+            {{day.dinner.name}}
+        </div>
+        } @else {
+        <div (click)="addMealToDay(day, 'dinner')">Clique ici pour ajouter un repas !</div>
+        }
+    </div>
+    }
 </div>

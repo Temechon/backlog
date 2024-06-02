@@ -5,11 +5,12 @@ import { Day } from '../../model/day.model';
 import { AutocompleteComponent } from '../autocomplete/autocomplete.component';
 import { WeekService } from '../../services/week.service';
 import { first } from 'rxjs';
+import { CapitalizeSpacesPipe } from '../../capitalizeSpaces.pipe';
 
 @Component({
   selector: 'day',
   standalone: true,
-  imports: [AutocompleteComponent, RouterModule, CommonModule],
+  imports: [AutocompleteComponent, RouterModule, CommonModule, CapitalizeSpacesPipe],
   templateUrl: './day-view.component.html',
   styleUrl: './day-view.component.scss'
 })
@@ -27,6 +28,11 @@ export class DayViewComponent {
 
   ngOnInit() {
     this.weekid = this.route.snapshot.paramMap.get('weekid');
+  }
+
+  accordion: boolean = true;
+  toggleAccordion() {
+    this.accordion = !this.accordion;
   }
 
   addMealToDay(day: Day, mealType: string) {
