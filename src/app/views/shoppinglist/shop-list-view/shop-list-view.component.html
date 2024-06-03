@@ -3,32 +3,44 @@
 </h1>
 
 <div class="mb-8">
-    <autocomplete placeholder="Ajouter une course ?"></autocomplete>
-</div>
-
-@if (ingredients$ | async; as ingredients) {
-
-@for (group of ingredients; track $index) {
-<div class="mb-4 border rounded-lg shadow-sm">
-    <div class="bg-indigo-50 p-2 text-indigo-400 cursor-pointer flex items-center justify-between"
-        (click)="toggleAccordion($index)">
-        <span class="font-semibold text-lg">{{group.shopCategory | capitalizeSpaces}}</span>
-        <i class="transition-transform duration-300"
-            [ngClass]="accordionState[$index] ? 'fas fa-chevron-down' : 'fas fa-chevron-down rotate-180'"></i>
+    <div class="flex mb-8 space-x-3">
+        <select
+            class="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+            <option value="legumes">Légumes</option>
+            <option value="fruits">Fruits</option>
+            <option value="viandes">Viandes</option>
+            <option value="produitsLaitiers">Produits Laitiers</option>
+            <option value="sec">Sec</option>
+            <option value="divers">Divers</option>
+        </select>
+        <div class="flex-1">
+            <autocomplete placeholder="Ajouter une course ?"></autocomplete>
+        </div>
     </div>
-    @if (accordionState[$index]) {
-    <div class="mt-2 p-2">
-        @for (ingredient of group.ingredients; track $index) {
-        <div class="px-4">
-            <label class="inline-flex items-center my-0.5">
-                <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300">
-                <span class="ml-2">{{ingredient.name}}</span>
-            </label>
+
+    @if (ingredients$ | async; as ingredients) {
+
+    @for (group of ingredients; track $index) {
+    <div class="mb-4 border rounded-lg shadow-sm">
+        <div class="bg-indigo-50 p-2 text-indigo-400 cursor-pointer flex items-center justify-between"
+            (click)="toggleAccordion($index)">
+            <span class="font-semibold text-lg">{{group.shopCategory | capitalizeSpaces}}</span>
+            <i class="transition-transform duration-300"
+                [ngClass]="accordionState[$index] ? 'fas fa-chevron-down' : 'fas fa-chevron-down rotate-180'"></i>
+        </div>
+        @if (accordionState[$index]) {
+        <div class="mt-2 p-2">
+            @for (ingredient of group.ingredients; track $index) {
+            <div class="px-4">
+                <label class="inline-flex items-center my-0.5">
+                    <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300">
+                    <span class="ml-2">{{ingredient.name}}</span>
+                </label>
+            </div>
+            }
         </div>
         }
     </div>
     }
-</div>
-}
 
-}
+    }

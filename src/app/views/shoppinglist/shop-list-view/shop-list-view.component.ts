@@ -25,7 +25,7 @@ export class ShopListViewComponent {
     private weekService: WeekService) {
   }
 
-
+  // Accordion
   accordionState: boolean[] = [];
   toggleAccordion(index: number) {
     this.accordionState[index] = !this.accordionState[index];
@@ -33,12 +33,15 @@ export class ShopListViewComponent {
 
   ngOnInit() {
 
+    // Get the current shop list from database, found in users/<userid>/shoplist
+    // Contains a document by shop category. Each document contains a list of : {ingredient:Ingredient, checked:boolean}
+    // TODO
 
+    // Prefill the shop list if empty
     this.ingredients$ = this.weekService.getAllIngredientFromWeek().pipe(
       map((ingredients: Ingredient[]) => new IngredientGroup(_.groupBy(ingredients, "shopCategory")))
       // tap(d => console.log(d))
     )
-
 
     this.ingredients$.subscribe(data => {
       this.accordionState = new Array(data.length).fill(true);

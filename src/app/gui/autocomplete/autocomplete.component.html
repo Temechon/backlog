@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative w-full">
     <input type="text" [(ngModel)]="searchTerm" (input)="onSearchTermChange()" [placeholder]=placeholder
         (focus)="onFocus()" (blur)="onBlur()" (keydown)="onKeyDown($event)"
         class="w-full p-2 border border-gray-300 rounded-md" />
@@ -11,7 +11,7 @@
         }
         @if (showAddOption && canDisplayAddOption) {
         <li class="p-2 hover:bg-gray-200 cursor-pointer italic text-sm" (click)="addNewItem()">
-            Ajouter un ingrédient...
+            Ajouter...
         </li>
         }
     </ul>
