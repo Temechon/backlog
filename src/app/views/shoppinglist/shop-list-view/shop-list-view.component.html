@@ -30,11 +30,12 @@
         </div>
         @if (accordionState[$index]) {
         <div class="mt-2 p-2">
-            @for (ingredient of group.ingredients; track $index) {
+            @for (shopitem of group.ingredients; track $index) {
             <div class="px-4">
                 <label class="inline-flex items-center my-0.5">
-                    <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300">
-                    <span class="ml-2">{{ingredient.name}}</span>
+                    <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300"
+                        [(ngModel)]="shopitem.checked" (change)="save(ingredients)">
+                    <span class="ml-2">{{shopitem.ingredient.name}}</span>
                 </label>
             </div>
             }
