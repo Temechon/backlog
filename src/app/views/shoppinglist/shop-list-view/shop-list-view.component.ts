@@ -8,7 +8,7 @@ import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.co
 import { Ingredient } from '../../../model/ingredient.model';
 import { WeekService } from '../../../services/week.service';
 import { ShoppingListService } from '../../../services/shoppinglist.service';
-import { ShoppingList } from '../../../model/shoppinglist.model';
+import { ShoppingItem, ShoppingList } from '../../../model/shoppinglist.model';
 
 @Component({
   selector: 'app-shop-list-view',
@@ -31,6 +31,11 @@ export class ShopListViewComponent {
   toggleAccordion(index: number) {
     this.accordionState[index] = !this.accordionState[index];
   }
+  // selected category to add an item to the list
+  selectedCategory: string
+  onCategoryChange(event: any): void {
+    this.selectedCategory = event.target.value;
+  }
 
   ngOnInit() {
 
@@ -47,7 +52,10 @@ export class ShopListViewComponent {
         ingredientlist => new ShoppingList(_.groupBy(ingredientlist, 'shopCategory'))
       ),
       switchMap(
-        shoplist => this.shopService.saveShoppingList(shoplist)
+        shoplist => {
+          this.accordionState = new Array(shoplist.length).fill(true);
+          return this.shopService.saveShoppingList(shoplist)
+        }
       ),
       first()
     ).subscribe();
@@ -57,16 +65,36 @@ export class ShopListViewComponent {
     });
   }
 
-  addIngredient(group: any, category: string) {
-    // const name = this.newIngredientName[category];
-    // if (name && name.trim()) {
-    //   group.addIngredient(name.trim(), category);
-    //   this.newIngredientName[category] = ''; // Clear the input field after adding
-    // }
+  /**
+   * Adds an item to the shopping list.
+   * @returns 
+   */
+  createItem(ingname: string) {
+    if (!ingname) {
+      return;
+    }
+    const newItem = new ShoppingItem({
+      ingredient: new Ingredient({ name: ingname, shopCategory: this.selectedCategory }),
+      checked: false
+    });
+    this.shopService.updateShoppingList(newItem, this.selectedCategory).pipe(first()).subscribe()
+  }
+
+  addItem(ing: Ingredient) {
+    const newItem = new ShoppingItem({
+      ingredient: ing,
+      checked: false
+    });
+    this.shopService.updateShoppingList(newItem, this.selectedCategory).pipe(first()).subscribe()
   }
 
   save($event: ShoppingList) {
     this.shopService.saveShoppingList($event).pipe(first()).subscribe()
+  }
+
+  // Remove the whole list and start a new one
+  newList() {
+    this.shopService.clearShoppingList().pipe(first()).subscribe()
   }
 
 }

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, docData, getDoc, onSnapshot, updateDoc } from '@angular/fire/firestore';
+import { Firestore, arrayUnion, doc, docData, getDoc, onSnapshot, updateDoc } from '@angular/fire/firestore';
 import { Observable, from, map, switchMap, tap } from 'rxjs';
 import { AuthentificationService } from './authentification.service';
-import { ShoppingList } from '../model/shoppinglist.model';
+import { ShoppingItem, ShoppingList } from '../model/shoppinglist.model';
 
 
 @Injectable({
@@ -43,6 +43,24 @@ export class ShoppingListService {
       switchMap(userId => {
         const weekRef = doc(this.firestore, `users/${userId}`);
         return from(updateDoc(weekRef, { shoplist: shoplist.toJson() }));
+      })
+    );
+  }
+
+  updateShoppingList(item: ShoppingItem, category: string) {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        const userRef = doc(this.firestore, `users/${userId}`);
+        return from(updateDoc(userRef, { [`shoplist.${category}`]: arrayUnion(item.toJson()) }));
+      })
+    );
+  }
+
+  clearShoppingList() {
+    return this.authService.getUserId().pipe(
+      switchMap(userId => {
+        const userRef = doc(this.firestore, `users/${userId}`);
+        return from(updateDoc(userRef, { shoplist: {} }))
       })
     );
   }
