@@ -114,9 +114,7 @@ export class DatabaseService {
       switchMap(userId => {
         if (userId) {
           const mealDocRef = doc(this.firestore, `users/${userId}/dishes/${meal.id}`);
-          return from(setDoc(mealDocRef, meal.toJson())).pipe(
-            map(() => void 0)
-          );
+          return from(setDoc(mealDocRef, meal.toJson()));
         } else {
           throw new Error('User is not authenticated');
         }

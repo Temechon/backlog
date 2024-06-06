@@ -4,7 +4,7 @@
 
 <div class="mb-8">
     <div class="flex mb-8 space-x-3">
-        <select
+        <select (change)="onCategoryChange($event)"
             class="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
             <option value="legumes">Légumes</option>
             <option value="fruits">Fruits</option>
@@ -14,7 +14,8 @@
             <option value="divers">Divers</option>
         </select>
         <div class="flex-1">
-            <autocomplete placeholder="Ajouter une course ?" [canDisplayAddOption]="false"></autocomplete>
+            <autocomplete placeholder="Ajouter une course ?" (newItem)="createItem($event)"
+                (selectItem)="addItem($event)"></autocomplete>
         </div>
     </div>
 
@@ -30,11 +31,12 @@
         </div>
         @if (accordionState[$index]) {
         <div class="mt-2 p-2">
-            @for (ingredient of group.ingredients; track $index) {
+            @for (shopitem of group.ingredients; track $index) {
             <div class="px-4">
                 <label class="inline-flex items-center my-0.5">
-                    <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300">
-                    <span class="ml-2">{{ingredient.name}}</span>
+                    <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300"
+                        [(ngModel)]="shopitem.checked" (change)="save(ingredients)">
+                    <span class="ml-2">{{shopitem.ingredient.name}}</span>
                 </label>
             </div>
             }
@@ -44,3 +46,8 @@
     }
 
     }
+
+    <div class="my-8 text-center">
+        <button class="bg-blue-500 text-white px-2 py-1 rounded" (click)="newList()">Commencer une nouvelle liste de
+            courses</button>
+    </div>

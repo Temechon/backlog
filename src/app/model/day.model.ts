@@ -21,12 +21,8 @@ export class Day {
 
     constructor(data?: any) {
         this.id = data.id;
-        if (data.lunch) {
-            this.lunch = new Meal(data.lunch);
-        }
-        if (data.dinner) {
-            this.dinner = new Meal(data.dinner);
-        }
+        this.lunch = new Meal(data.lunch);
+        this.dinner = new Meal(data.dinner);
 
     }
 

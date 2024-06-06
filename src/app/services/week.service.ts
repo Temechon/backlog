@@ -44,16 +44,19 @@ export class WeekService {
 
                   for (let day of week.days) {
                     const lunch = day.lunch;
-                    ingds.push(...lunch.ingredients);
-                    if (lunch.mainDish) {
-                      ingds.push(...lunch.mainDish.ingredients);
+                    if (lunch) {
+                      ingds.push(...lunch.ingredients);
+                      if (lunch.mainDish) {
+                        ingds.push(...lunch.mainDish.ingredients);
+                      }
                     }
 
-
                     const dinner = day.dinner;
-                    ingds.push(...dinner.ingredients);
-                    if (dinner.mainDish) {
-                      ingds.push(...dinner.mainDish.ingredients);
+                    if (dinner) {
+                      ingds.push(...dinner.ingredients);
+                      if (dinner.mainDish) {
+                        ingds.push(...dinner.mainDish.ingredients);
+                      }
                     }
                   }
                   const uniq = _.chain(ingds).compact().uniq("id").value();

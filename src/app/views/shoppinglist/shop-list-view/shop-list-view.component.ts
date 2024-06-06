@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, first, map, switchMap, tap } from 'rxjs';
 import * as _ from 'underscore';
 import { CapitalizeSpacesPipe } from '../../../capitalizeSpaces.pipe';
 import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.component';
 import { Ingredient } from '../../../model/ingredient.model';
 import { WeekService } from '../../../services/week.service';
+import { ShoppingListService } from '../../../services/shoppinglist.service';
+import { ShoppingItem, ShoppingList } from '../../../model/shoppinglist.model';
 
 @Component({
   selector: 'app-shop-list-view',
@@ -17,12 +19,11 @@ import { WeekService } from '../../../services/week.service';
 })
 export class ShopListViewComponent {
 
-  ingredients$: Observable<IngredientGroup>;
-  shoplist: Array<{ shopCategory: string, item: string }> = [];
+  ingredients$: Observable<ShoppingList>;
   newIngredientName: { [key: string]: string } = {};
 
   constructor(
-    private weekService: WeekService) {
+    private weekService: WeekService, private shopService: ShoppingListService) {
   }
 
   // Accordion
@@ -30,69 +31,70 @@ export class ShopListViewComponent {
   toggleAccordion(index: number) {
     this.accordionState[index] = !this.accordionState[index];
   }
+  // selected category to add an item to the list
+  selectedCategory: string
+  onCategoryChange(event: any): void {
+    this.selectedCategory = event.target.value;
+  }
 
   ngOnInit() {
 
     // Get the current shop list from database, found in users/<userid>/shoplist
-    // Contains a document by shop category. Each document contains a list of : {ingredient:Ingredient, checked:boolean}
-    // TODO
+    this.ingredients$ = this.shopService.getShoppingList()
 
-    // Prefill the shop list if empty
-    this.ingredients$ = this.weekService.getAllIngredientFromWeek().pipe(
-      map((ingredients: Ingredient[]) => new IngredientGroup(_.groupBy(ingredients, "shopCategory")))
-      // tap(d => console.log(d))
-    )
-
-    this.ingredients$.subscribe(data => {
-      this.accordionState = new Array(data.length).fill(true);
-    });
-  }
-
-  addIngredient(group: IngredientGroup, category: string) {
-    const name = this.newIngredientName[category];
-    if (name && name.trim()) {
-      group.addIngredient(name.trim(), category);
-      this.newIngredientName[category] = ''; // Clear the input field after adding
-    }
-  }
-
-}
-
-class IngredientGroup {
-
-  constructor(private ingredientsByCategory: { [key: string]: Ingredient[] } = {}) {
-  }
-
-  [Symbol.iterator]() {
-    const categories = Object.keys(this.ingredientsByCategory);
-    let index = 0;
-    const ingredientsByCategory = this.ingredientsByCategory;
-
-    return {
-      next(): IteratorResult<{ shopCategory: string; ingredients: Ingredient[] }> {
-        if (index < categories.length) {
-          const shopCategory = categories[index++];
-          return { value: { shopCategory, ingredients: ingredientsByCategory[shopCategory] }, done: false };
-        } else {
-          return { value: null, done: true };
+    // If shop list length is 0, prefill with the week meals
+    this.ingredients$.pipe(
+      filter(shoplist => shoplist.length === 0),
+      switchMap(
+        () => this.weekService.getAllIngredientFromWeek()
+      ),
+      map(
+        ingredientlist => new ShoppingList(_.groupBy(ingredientlist, 'shopCategory'))
+      ),
+      switchMap(
+        shoplist => {
+          this.accordionState = new Array(shoplist.length).fill(true);
+          return this.shopService.saveShoppingList(shoplist)
         }
-      }
-    };
-  }
+      ),
+      first()
+    ).subscribe();
 
-  get length(): number {
-    return Object.keys(this.ingredientsByCategory).length;
-  }
-
-  addIngredient(name: string, shopCategory: string) {
-    const newIngredient = new Ingredient({
-      name: name,
-      shopCategory: shopCategory
+    this.ingredients$.pipe(first()).subscribe(shoplist => {
+      this.accordionState = new Array(shoplist.length).fill(true);
     });
-
-    if (!this.ingredientsByCategory[shopCategory]) {
-      this.ingredientsByCategory[shopCategory] = [];
-    }
-    this.ingredientsByCategory[shopCategory].push(newIngredient);
   }
+
+  /**
+   * Adds an item to the shopping list.
+   * @returns 
+   */
+  createItem(ingname: string) {
+    if (!ingname) {
+      return;
+    }
+    const newItem = new ShoppingItem({
+      ingredient: new Ingredient({ name: ingname, shopCategory: this.selectedCategory }),
+      checked: false
+    });
+    this.shopService.updateShoppingList(newItem, this.selectedCategory).pipe(first()).subscribe()
+  }
+
+  addItem(ing: Ingredient) {
+    const newItem = new ShoppingItem({
+      ingredient: ing,
+      checked: false
+    });
+    this.shopService.updateShoppingList(newItem, this.selectedCategory).pipe(first()).subscribe()
+  }
+
+  save($event: ShoppingList) {
+    this.shopService.saveShoppingList($event).pipe(first()).subscribe()
+  }
+
+  // Remove the whole list and start a new one
+  newList() {
+    this.shopService.clearShoppingList().pipe(first()).subscribe()
+  }
+
 }
