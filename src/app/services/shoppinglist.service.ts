@@ -17,15 +17,6 @@ export class ShoppingListService {
     private authService: AuthentificationService) {
   }
 
-  private listenDoc(reference) {
-    return new Observable(observer => {
-      return onSnapshot(reference,
-        (snapshot => observer.next(snapshot.data())),
-        (error => observer.error(error.message))
-      );
-    });
-  }
-
   getShoppingList(): Observable<ShoppingList> {
     return this.authService.getUserId().pipe(
       switchMap(userId => {

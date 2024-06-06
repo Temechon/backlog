@@ -1,8 +1,7 @@
+import * as _ from 'underscore';
 import { guid } from "../app.component";
 import { Day, SystemDay } from "./day.model";
-import * as _ from 'underscore';
 import { Ingredient } from "./ingredient.model";
-import { Meal } from "./meal.model";
 
 const days = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
 
@@ -67,5 +66,18 @@ export class Week {
                 day.dinner.updateIngredient(ing);
             }
         }
+    }
+
+
+    setToDay(dayname: string): Array<Day> {
+        const index = _.findIndex(this.days, (day: Day) => day.id.toLowerCase() === dayname.toLowerCase());
+
+        if (index === -1) {
+            throw new Error(`Day with name ${dayname} not found`);
+        }
+
+        const removedDays = this.days.splice(0, index);
+        // this.days = [...this.days, ...removedDays];
+        return removedDays;
     }
 }

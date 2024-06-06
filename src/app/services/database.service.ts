@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, deleteDoc, doc, docData, setDoc } from '@angular/fire/firestore';
-import { Observable, combineLatest, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
+import { Firestore, collection, collectionData, deleteDoc, doc, docData, setDoc, updateDoc } from '@angular/fire/firestore';
+import { Observable, combineLatest, first, forkJoin, from, map, of, switchMap, tap } from 'rxjs';
 import * as _ from 'underscore';
 import { Ingredient } from '../model/ingredient.model';
 import { Dish } from '../model/meal.model';
 
+import { ShoppingList } from '../model/shoppinglist.model';
 import { Week } from '../model/week.model';
 import { AuthentificationService } from './authentification.service';
+import { ShoppingListService } from './shoppinglist.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,9 @@ export class DatabaseService {
   private firestore: Firestore = inject(Firestore);
 
   constructor(
-    private authService: AuthentificationService) {
+    private authService: AuthentificationService,
+    private shopService: ShoppingListService
+  ) {
   }
 
 
@@ -231,6 +235,18 @@ export class DatabaseService {
     )
   }
 
+  private updateIngredientInShoppinglist(userId: string, ing: Ingredient): Observable<any> {
+    const userRef = doc(this.firestore, `users/${userId}`);
+    return docData(userRef).pipe(
+      map(user => user['shoplist']),
+      map(shoplist => new ShoppingList(shoplist)),
+      map(shoplist => {
+        shoplist.updateIngredient(ing);
+        return from(updateDoc(userRef, { shoplist: shoplist.toJson() }));
+      }),
+    );
+  }
+
   /**
    * Removes the given dish from all meals of all past weeks
    */
@@ -294,6 +310,7 @@ export class DatabaseService {
           return from(setDoc(ingDocRef, ing.toJson())).pipe(
             switchMap(() => this.updateIngredientInDishes(userId, ing)),
             switchMap(() => this.updateIngredientInWeeks(userId, ing)),
+            switchMap(() => this.updateIngredientInShoppinglist(userId, ing)),
           )
         } else {
           throw new Error('User is not authenticated');

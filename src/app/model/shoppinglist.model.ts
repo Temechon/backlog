@@ -1,4 +1,5 @@
 import { Ingredient } from "./ingredient.model";
+import * as _ from 'underscore';
 
 export class ShoppingItem {
     ingredient: Ingredient;
@@ -50,6 +51,39 @@ export class ShoppingList {
             this.categories[shopCategory] = [];
         }
         this.categories[shopCategory].push(new ShoppingItem({ ingredient: newIngredient, checked: false }));
+    }
+
+    updateIngredient(ing: Ingredient) {
+        let found = false;
+
+        // Utiliser _.each pour parcourir les catégories
+        _.each(this.categories, (items, category) => {
+            console.log(items, category);
+
+            if (!found) {
+                // Trouver l'index de l'ingrédient dans la catégorie actuelle
+                const index = _.findIndex(items, item => item.ingredient.id === ing.id);
+
+                if (index !== -1) {
+                    found = true;
+                    // Vérifier si la catégorie a changé
+                    if (category !== ing.shopCategory) {
+                        // Supprimer l'ingrédient de l'ancienne catégorie
+                        items.splice(index, 1);
+                        // Ajouter l'ingrédient à la nouvelle catégorie
+                        this.addIngredient(ing.name, ing.shopCategory);
+                    } else {
+                        // Mettre à jour l'ingrédient dans la même catégorie
+                        items[index] = new ShoppingItem({ ingredient: ing, checked: items[index].checked });
+                    }
+                }
+            }
+        });
+
+        // Si l'ingrédient n'a pas été trouvé, ajouter comme un nouvel ingrédient
+        if (!found) {
+            this.addIngredient(ing.name, ing.shopCategory);
+        }
     }
 
     [Symbol.iterator]() {
