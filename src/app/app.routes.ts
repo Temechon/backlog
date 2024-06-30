@@ -7,19 +7,19 @@ import { IngredientViewComponent } from './views/ingredients/ingredient-view/ing
 import { ShopListViewComponent } from './views/shoppinglist/shop-list-view/shop-list-view.component';
 import { CreateMealViewComponent } from './views/week/create-meal-view/create-meal-view.component';
 import { WeekViewComponent } from './views/week/week-view/week-view.component';
+import { LoginComponent } from './views/login/login.component';
 
 export const routes: Routes = [
     {
         path: "home",
-        component: MenuListComponent,
+        component: LoginComponent,
     },
     {
         path: "week",
         children: [
             {
                 path: "",
-                pathMatch: 'full',
-                redirectTo: "/home"
+                component: MenuListComponent,
             },
             {
                 path: ":weekid",

@@ -6,6 +6,7 @@ import { AuthentificationService } from './authentification.service';
 import { DatabaseService } from './database.service';
 import * as _ from 'underscore';
 import { Ingredient } from '../model/ingredient.model';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -18,7 +19,7 @@ export class WeekService {
 
   constructor(
     private authService: AuthentificationService,
-    private db: DatabaseService) {
+    private router: Router) {
   }
 
   private listenDoc(reference) {
@@ -87,7 +88,7 @@ export class WeekService {
               if (userDocSnap.exists()) {
                 return userDocSnap.data()['currentWeek'] ?? "";
               } else {
-                throw new Error('User document not found');
+                return "";
               }
             })
           );
@@ -142,8 +143,21 @@ export class WeekService {
       switchMap(userId => {
         if (userId) {
           const weekRef = doc(this.firestore, `users/${userId}`);
-          return from(updateDoc(weekRef, { currentWeek: weekid }));
+          return from(getDoc(weekRef)).pipe(
+            switchMap(docSnapshot => {
+              if (docSnapshot.exists()) {
+                return from(updateDoc(weekRef, { currentWeek: weekid }));
+              } else {
+                return from(setDoc(weekRef, { currentWeek: weekid }));
+              }
+            }),
+            catchError(error => {
+              console.error('Error updating or creating document:', error);
+              throw error;
+            })
+          );
         } else {
+          this.router.navigate(['/home']);
           throw new Error('User is not authenticated');
         }
       })
