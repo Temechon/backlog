@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Observable, filter, first, map, switchMap, tap } from 'rxjs';
+import { Observable, filter, first, map, switchMap } from 'rxjs';
 import * as _ from 'underscore';
 import { CapitalizeSpacesPipe } from '../../../capitalizeSpaces.pipe';
 import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.component';
 import { Ingredient } from '../../../model/ingredient.model';
-import { WeekService } from '../../../services/week.service';
-import { ShoppingListService } from '../../../services/shoppinglist.service';
 import { ShoppingItem, ShoppingList } from '../../../model/shoppinglist.model';
+import { ShoppingListService } from '../../../services/shoppinglist.service';
+import { WeekService } from '../../../services/week.service';
 
 @Component({
   selector: 'app-shop-list-view',
@@ -32,7 +32,7 @@ export class ShopListViewComponent {
     this.accordionState[index] = !this.accordionState[index];
   }
   // selected category to add an item to the list
-  selectedCategory: string
+  selectedCategory: string = "legumes"
   onCategoryChange(event: any): void {
     this.selectedCategory = event.target.value;
   }
@@ -86,6 +86,22 @@ export class ShopListViewComponent {
       checked: false
     });
     this.shopService.updateShoppingList(newItem, this.selectedCategory).pipe(first()).subscribe()
+  }
+
+  deleteItem(item: ShoppingItem) {
+    const categ = item.ingredient.shopCategory
+
+    this.ingredients$.pipe(
+      first(),
+      map(shoppingList => {
+        shoppingList.removeIngredient(item.ingredient, categ);
+        return shoppingList;
+      }),
+      switchMap(updatedList => this.shopService.saveShoppingList(updatedList))
+    ).subscribe(() => {
+      console.log('Item supprimé avec succès');
+    });
+
   }
 
   save($event: ShoppingList) {

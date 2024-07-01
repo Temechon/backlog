@@ -53,6 +53,19 @@ export class ShoppingList {
         this.categories[shopCategory].push(new ShoppingItem({ ingredient: newIngredient, checked: false }));
     }
 
+    removeIngredient(ing: Ingredient, shopCategory: string) {
+        if (this.categories[shopCategory]) {
+            this.categories[shopCategory] = this.categories[shopCategory].filter(
+                shoppingItem => shoppingItem.ingredient.id !== ing.id
+            );
+
+            // Si la catégorie est vide après la suppression, on la retire
+            if (this.categories[shopCategory].length === 0) {
+                delete this.categories[shopCategory];
+            }
+        }
+    }
+
     updateIngredient(ing: Ingredient) {
         let found = false;
 
