@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './gui/navbar/navbar.component';
+import { AuthentificationService } from './services/authentification.service';
 
 
 @Component({
@@ -11,6 +12,10 @@ import { NavbarComponent } from './gui/navbar/navbar.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+
+  constructor(public auth: AuthentificationService) {
+
+  }
 
 }
 

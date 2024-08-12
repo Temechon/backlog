@@ -36,9 +36,15 @@
                 <input type="checkbox" class="text-red-500 rounded w-5 h-5 focus:ring-red-300"
                     [(ngModel)]="shopitem.checked" (change)="save(ingredients)">
                 <span class="ml-2">{{shopitem.ingredient.name}}</span>
+                @if (shopitem.checked) {
+                <button
+                    class="ml-auto text-green-500 p-1 flex items-center justify-center rounded mx-2 w-6 h-6 hover:bg-red-50 "><i
+                        class="fas fa-check"></i></button>
+                } @else {
                 <button (click)="deleteItem(shopitem)"
                     class="ml-auto text-red-500 p-1 flex items-center justify-center rounded mx-2 w-6 h-6 hover:bg-red-50 "><i
                         class="fas fa-times"></i></button>
+                }
             </label>
             }
         </div>

@@ -1,7 +1,12 @@
-<div class="p-8 pb-24">
-  <router-outlet />
+<div class="flex items-center w-full justify-center">
+
+  <div class="p-8 pb-24 w-full max-w-3xl">
+    <router-outlet />
+  </div>
 </div>
 
-<footer>
+@if (auth.isUserConnected()){
+<footer class="bg-red-300">
   <mynavbar></mynavbar>
 </footer>
+}

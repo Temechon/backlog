@@ -12,7 +12,6 @@ export class AuthentificationService {
 
   constructor(private router: Router) {
 
-    console.log("coucou")
     this.getUserId().subscribe(user => {
       if (!user) {
         console.log("user not connected");
@@ -34,4 +33,9 @@ export class AuthentificationService {
   getUserId(): Observable<string> {
     return user(this.auth).pipe(map(user => user?.uid || null));
   }
+
+  isUserConnected(): boolean {
+    return this.auth.currentUser !== null;
+  }
+
 }
