@@ -44,10 +44,13 @@ export class Meal {
     id: string;
     ingredients: Ingredient[] = []; // Liste des ingrédients
     mainDish: Dish;
+    // True if the meal is eaten outside (at restaurant or at friends)
+    isOutside = false;
 
     constructor(data: any = {}) {
         this.id = data.id || guid();
         this.ingredients = (data.ingredients || []).map((ingData: any) => new Ingredient(ingData));
+        this.isOutside = data.isOutside ?? false;
         if (data.mainDish) {
             this.mainDish = new Dish(data.mainDish);
         } else {
@@ -77,6 +80,7 @@ export class Meal {
         const obj = {
             id: this.id,
             ingredients: this.ingredients.map(ingredient => ingredient.toJson()),
+            isOutside: this.isOutside,
             mainDish: this.mainDish?.toJson() ?? null
         };
 

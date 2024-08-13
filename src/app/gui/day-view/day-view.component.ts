@@ -39,6 +39,21 @@ export class DayViewComponent {
     return this.router.navigate(["week", this.weekid, day.id, mealType]);
   }
 
+  setOutside(mealType: string) {
+    if (mealType === 'lunch') {
+      this.day.lunch.isOutside = true;
+    } else if (mealType === 'dinner') {
+      this.day.dinner.isOutside = true;
+    }
+
+    this.weekService.getWeekById(this.weekid).pipe(first()).subscribe(week => {
+
+      week.replace(this.day);
+      this.weekService.saveWeek(week).pipe(first()).subscribe()
+      this.editMode = "";
+    })
+  }
+
   deleteMeal($event: Event, day: Day) {
     $event.stopPropagation();
 
