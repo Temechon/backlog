@@ -17,7 +17,6 @@
     <div class="text-lg">
         <span class=" font-semibold">Plat principal :</span> {{currentMeal.mainDish.name}}
     </div>
-    }
     <div class="mb-4">
         <label class="block text-gray-700 text-sm font-semibold mb-2">
             Servi avec :
@@ -34,14 +33,16 @@
             }
         </ul>
     </div>
-    }
-</div>
+    <div class="my-8 text-center">
+        <button class="bg-blue-500 text-white px-2 py-1 rounded" (click)="back()">Enregistrer</button>
+    </div>
 
+    }
+    }
+
+</div>
 }
 
-<!-- <autocomplete [items]="allDishesAndIngredients" (selectItem)="addToMeal($event)" placeholder="Chercher..."
-    [canDisplayAddOption]="false">
-</autocomplete> -->
 
 <h1 class="font-semibold text-2xl my-8">
     Plats disponibles

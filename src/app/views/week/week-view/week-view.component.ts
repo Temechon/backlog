@@ -20,7 +20,6 @@ export class WeekViewComponent {
   currentday: string = "";
   daysBeforeToday: Array<Day>;
 
-
   constructor(
     private weekService: WeekService,
     private route: ActivatedRoute,
@@ -35,6 +34,7 @@ export class WeekViewComponent {
     const today = new Date();
     this.currentday = daysOfWeek[today.getDay()];
 
+
     this.route.paramMap.subscribe(params => {
 
       const weekid = params.get('weekid');
@@ -43,6 +43,8 @@ export class WeekViewComponent {
           map(
             (week: Week) => {
               this.daysBeforeToday = week.setToDay(this.currentday)
+              console.log(this.daysBeforeToday);
+
               return week;
             }
           )

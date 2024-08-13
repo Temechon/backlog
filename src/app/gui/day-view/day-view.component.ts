@@ -30,7 +30,7 @@ export class DayViewComponent {
     this.weekid = this.route.snapshot.paramMap.get('weekid');
   }
 
-  accordion: boolean = true;
+  @Input() accordion: boolean = true;
   toggleAccordion() {
     this.accordion = !this.accordion;
   }

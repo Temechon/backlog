@@ -68,7 +68,18 @@ export class Week {
         }
     }
 
-
+    /**
+     * Shifts the days in the week so that the specified day becomes the first day.
+     * 
+     * @param dayname - The name of the day to set as the first day in the week.
+     * @returns An array of the days that were removed from the beginning of the week.
+     * 
+     * @throws Error if the specified day is not found in the current list of days.
+     * 
+     * The method searches for the index of the specified day and removes all days 
+     * that come before it in the `days` array. These removed days are returned as 
+     * an array. The remaining days in the array start with the specified day.
+    */
     setToDay(dayname: string): Array<Day> {
         const index = _.findIndex(this.days, (day: Day) => day.id.toLowerCase() === dayname.toLowerCase());
 
@@ -76,8 +87,8 @@ export class Week {
             throw new Error(`Day with name ${dayname} not found`);
         }
 
+        // Retire les jours précédents de la semaine actuelle
         const removedDays = this.days.splice(0, index);
-        // this.days = [...this.days, ...removedDays];
         return removedDays;
     }
 }

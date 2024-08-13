@@ -5,7 +5,7 @@ import { Ingredient } from '../../../model/ingredient.model';
 import { Dish, Meal } from '../../../model/meal.model';
 import { AutocompleteComponent } from '../../../gui/autocomplete/autocomplete.component';
 import * as _ from 'underscore';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Day } from '../../../model/day.model';
 import { WeekService } from '../../../services/week.service';
 import { CommonModule } from '@angular/common';
@@ -31,7 +31,8 @@ export class CreateMealViewComponent {
   constructor(
     private db: DatabaseService,
     private route: ActivatedRoute,
-    private weekService: WeekService
+    private weekService: WeekService,
+    private router: Router,
   ) {
 
   }
@@ -104,6 +105,10 @@ export class CreateMealViewComponent {
   removeFromMeal(ing: Ingredient) {
     this.meal.ingredients = this.meal.ingredients.filter(i => i.id !== ing.id);
     this.weekService.saveWeek(this.week).pipe(first()).subscribe()
+  }
+
+  back() {
+    this.router.navigate(['/week']);
   }
 
 }
