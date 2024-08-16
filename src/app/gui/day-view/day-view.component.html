@@ -1,8 +1,9 @@
 <div class="mb-4 border rounded-lg shadow-sm" (click)="onBlur()">
     <!-- Nom du jour de la semaine -->
     <div class="bg-indigo-50 rounded-t-lg p-2 text-indigo-400 cursor-pointer flex items-center justify-between"
-        [ngClass]="{'text-red-500': currentday}" (click)="toggleAccordion()">
-        <span class="font-semibold text-lg">{{day.id |capitalizeSpaces}}</span>
+        [ngClass]="{'bg-orange-100 text-orange-500': currentday}" (click)="toggleAccordion()">
+        <span class="font-semibold text-lg" [ngClass]="{'text-orange-600': currentday}">{{day.id
+            |capitalizeSpaces}}</span>
         @if (editMode) {
         <div>
             <button class="bg-blue-500 text-white p-1 rounded mx-2 text-xs w-6 h-6"
@@ -16,61 +17,41 @@
         }
     </div>
     @if (accordion) {
-    <!-- Lunch -->
-    <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
-        [ngClass]="{'bg-red-500 hover:bg-red-200 text-white':editMode==='lunch'}">
-        @if (day.lunch && ! day.lunch.isEmpty()) {
-        <div (click)="editMeal($event, 'lunch')">
-            {{day.lunch.name}}
-        </div>
-        } @else {
-        <!-- No meal for lunch -->
-
-        <div class="flex items-center">
-            @if(day.lunch?.isOutside) {
-            <div class="text-gray-500 italic flex-1" (click)="editMeal($event, 'lunch')">
-                <span class="text-gray-300 text-sm font-semibold">Midi : </span>
-                <span class="">C'est cantine !<i class="fas fa-utensils ml-2"></i></span>
+    <ng-container *ngFor="let mealType of ['lunch', 'dinner']">
+        <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
+            [ngClass]="{'bg-orange-300 hover:bg-orange-200': editMode === mealType}">
+            @if (day[mealType] && !day[mealType].isEmpty()) {
+            <div (click)="editMeal($event, mealType)">
+                {{ day[mealType].name }}
             </div>
             } @else {
-            <div class="text-gray-400 italic flex-1" (click)="addMealToDay(day, 'lunch')">
-                <span class="text-gray-300 text-sm font-semibold">Midi
-                    : </span>Pas encore de repas
+            <!-- No meal for {{mealType}} -->
+            <div class="flex items-center">
+                @if(day[mealType]?.isOutside) {
+                <div class="text-gray-500 italic flex-1" (click)="editMeal($event, mealType)">
+                    <span class="text-gray-300 text-sm font-semibold">{{ mealType === 'lunch' ? 'Midi' : 'Soir' }} :
+                    </span>
+                    @if (day.id === 'samedi' || day.id === 'dimanche') {
+                    <span>C'est pas chez nous !<i class="fas fa-champagne-glasses ml-2"></i></span>
+                    } @else {
+                    <span>{{ mealType === 'lunch' ? "C'est cantine !" : "On sort ?" }}<i
+                            class="fas fa-utensils ml-2"></i></span>
+                    }
+                </div>
+                } @else {
+                <div class="text-gray-400 italic flex-1" (click)="addMealToDay(day, mealType)">
+                    <span class="text-gray-300 text-sm font-semibold">{{ mealType === 'lunch' ? 'Midi' : 'Soir' }} :
+                    </span>Pas encore de repas
+                </div>
+                <button class="bg-blue-100 text-blue-500 border-blue-300 border px-2 py-1 rounded"
+                    [ngClass]="{'bg-orange-100 text-orange-500 border-orange-300':mealType === 'lunch'}"
+                    (click)="setOutside(mealType)">
+                    <i class="fas fa-utensils mr-2"></i>{{ mealType === 'lunch' ? "Cantine ?" : "On sort ?" }}
+                </button>
+                }
             </div>
-            <button class="bg-red-500 text-white px-2 py-1 rounded" (click)="setOutside('lunch')"><i
-                    class="fas fa-utensils mr-2"></i>Cantine ?
-            </button>
             }
         </div>
-        }
-    </div>
-    <!-- Dinner -->
-    <div class="px-4 py-1 mt-2 hover:bg-indigo-50 cursor-pointer hover:text-indigo-600"
-        [ngClass]="{'bg-red-500 hover:bg-red-200 text-white':editMode==='dinner'}">
-        @if (day.dinner && ! day.dinner.isEmpty()) {
-        <div (click)="editMeal($event, 'dinner')">
-            {{day.dinner.name}}
-        </div>
-        } @else {
-        <!-- No meal for dinner -->
-        <div class="flex items-center">
-
-            @if(day.dinner?.isOutside) {
-            <div class="text-gray-500 italic flex-1" (click)="editMeal($event, 'dinner')">
-                <span class="text-gray-300 text-sm font-semibold">Soir : </span>
-                <span class="">C'est pas chez nous !<i class="fas fa-champagne-glasses ml-2"></i></span>
-            </div>
-            } @else {
-            <div class="text-gray-400 italic flex-1" (click)="addMealToDay(day, 'dinner')">
-                <span class="text-gray-300 text-sm font-semibold">Soir
-                    : </span>Pas encore de repas
-            </div>
-            <button class="bg-red-500 text-white px-2 py-1 rounded" (click)="setOutside('dinner')"><i
-                    class="fas fa-utensils mr-2"></i>On sort ?
-            </button>
-            }
-        </div>
-        }
-    </div>
+    </ng-container>
     }
 </div>

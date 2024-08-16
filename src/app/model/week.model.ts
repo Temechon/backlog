@@ -28,17 +28,30 @@ export class Week {
     id: string;
     days: Array<Day> = [];
 
+    static FIRSTDAY_OF_THE_WEEK = "samedi";
+
     constructor(data?: any) {
         this.id = data?.id ?? guid();
 
-        for (let dayname of days) {
+        // Trouver l'index du premier jour de la semaine
+        const startIndex = days.indexOf(Week.FIRSTDAY_OF_THE_WEEK);
+
+        // Réorganiser la liste des jours pour commencer par le jour défini
+        const orderedDays = [
+            ...days.slice(startIndex),
+            ...days.slice(0, startIndex)
+        ];
+
+        // Créer les objets Day dans l'ordre souhaité
+        for (let dayname of orderedDays) {
             const dbday = data?.days?.filter((dbobj: any) => dbobj.id === dayname).pop();
             if (dbday) {
-                this.days.push(new Day({ ...dbday, id: dbday.id }))
+                this.days.push(new Day({ ...dbday, id: dbday.id }));
             } else {
-                this.days.push(new Day({ id: dayname }))
+                this.days.push(new Day({ id: dayname }));
             }
         }
+
     }
 
     getDay(name: string): Day {
@@ -91,4 +104,5 @@ export class Week {
         const removedDays = this.days.splice(0, index);
         return removedDays;
     }
+
 }
